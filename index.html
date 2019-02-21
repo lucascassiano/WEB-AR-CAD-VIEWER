@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <link type="text/css" rel="stylesheet" href="style.css"/>
+</head>
+<body>
+    <div id="overlay">
+        <h1>CAD AR VIEWER</h1>
+        <button onclick="initEditor()">Editor</button>
+        <button onclick="initViewer()">Viewer</button>
+
+        <div id="editor">
+            <button onclick="saveKeyframe()">Keyframe</button>
+            <button onclick="preview()">Preview</button>
+            <button onclick="exportContent()">Export</button>
+        </div>
+        <div id="viewer">
+            <button onclick="previewer()">Preview Viewer</button>
+        </div>
+        
+    </div>
+
+    <div id="renderDiv"></div>
+
+    <script type="text/javascript" src="misc/three.js"></script>
+    <script type="text/javascript" src="misc/transformControls.js"></script>
+    <script type="text/javascript" src="misc/Orbit.js"></script>
+    <script type="text/javascript" src="misc/pathFollower.js"></script>
+    <script type="text/javascript" src="misc/fileSaver.js"></script>
+    <script type="text/javascript" src="editor/editor.js"></script>
+
+  
+    <script type="text/javascript" src="./viewer/data/arjs/ar.js"></script>
+    <script type="text/javascript" src="./viewer/viewer.js"></script>
+</body>
+</html>
