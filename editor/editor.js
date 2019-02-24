@@ -3,6 +3,7 @@ var scene, camera, renderer, orbit, control;
 var objects = [];
 
 var lastSelected;
+var lastSelectedToMaterial;
 
 var mouse = new THREE.Vector2();
 
@@ -69,23 +70,19 @@ function initEditor(){
     var gridHelper = new THREE.GridHelper( size, divisions );
     scene.add( gridHelper );
 
-    var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-    var material = new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true } );
-    var cube = new THREE.Mesh( geometry, material );
-    scene.add( cube );
-    objects.push(cube);
+    // var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+    // var material = new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true } );
+    // var cube = new THREE.Mesh( geometry, material );
+    // scene.add( cube );
+    // objects.push(cube);
 
-    var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-    var material = new THREE.MeshBasicMaterial( { color: 0x67f5ff, transparent: true } );
-    var cube = new THREE.Mesh( geometry, material );
-    cube.position.set(1,0,1);
-    scene.add( cube );
-    objects.push(cube);
-    console.log(cube);
-
-    
-
-    
+    // var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+    // var material = new THREE.MeshBasicMaterial( { color: 0x67f5ff, transparent: true } );
+    // var cube = new THREE.Mesh( geometry, material );
+    // cube.position.set(1,0,1);
+    // scene.add( cube );
+    // objects.push(cube);
+    // console.log(cube);
 
     camera.position.z = 5;
 
@@ -127,18 +124,41 @@ function onDocumentMouseDown(event) {
   
     let intersects = raycaster.intersectObjects(objects);
     
-    if(intersects.length > 0){  
-          control.attach(intersects[0].object);
-          lastSelected = intersects[0].object;
-          lastSelected.material.opacity = 0.75;
+    
+    if(event.button == 0){
+        document.getElementById("optBt").style.display = "none";
+        if(intersects.length > 0){ 
+            if(lastSelected == null){
+                control.attach(intersects[0].object);
+                lastSelected = intersects[0].object;
+                lastSelected.material.opacity = 0.75;
+
+            } else if(lastSelected.id != intersects[0].object.id ){
+                control.detach(lastSelected);
+                lastSelected.material.opacity = 1;
+
+                control.attach(intersects[0].object);
+                lastSelected = intersects[0].object;
+                lastSelected.material.opacity = 0.75;
+            }
         
-    }else{
-        if(lastSelected != null){
-            control.detach(lastSelected);
-            lastSelected.material.opacity = 1;
+            
         }
-      
+    }else if(event.button == 2){
+        
+        if(intersects.length > 0){ 
+
+            document.getElementById("optBt").style.display = "block";
+            document.getElementById("optBt").style.top = String(event.clientY) + "px";
+            document.getElementById("optBt").style.left= String(event.clientX) + "px";
+
+
+
+
+            lastSelectedToMaterial = intersects[0].object;
+        }
     }
+         
 }
 
 function onkeydown(event){
@@ -280,7 +300,6 @@ function preview(){
     pathFollower.preview(pathObjs, pathPoints);
 }
 
-
 function exportContent(n){
     if(n == 1){
         let tempObj = [];
@@ -296,9 +315,6 @@ function exportContent(n){
         geoFile.exportToAR(geoText, keyText, "teste");
     }
     
-
-    
-
   //download('test.arcad', 'Hello world!');
 }
 
@@ -308,7 +324,7 @@ function onModelLoad(event) {
     let objLoader = new THREE.OBJLoader();
   
     var geometry = objLoader.parse(modelData);
-    let pos = new THREE.Vector3(0, 0, 12);
+    let pos = new THREE.Vector3(0, 0, 0);
   
     if (geometry.children.length > 0) {
       for (let i = 0; i < geometry.children.length; i++) {
@@ -330,6 +346,8 @@ function onModelLoad(event) {
       loadedModels.push(obj);
       objects.push(obj);
     }
+
+    this.value = "";
 }
   
 function onMaterialLoad(event) {
@@ -344,23 +362,16 @@ function onMaterialLoad(event) {
       let newM = material.createMaterial_(name);
       tempMat.push(newM);
     }
+
+    newMatArr = material.getAsArray();
   
-    if(tempMat.length > 1){
-      newMatArr = material.getAsArray();
-      loadedMaterials.push(newMatArr);
-    }else if(tempMat.length == 1){
-      loadedMaterials.push(tempMat[0]);
-    }
-  
-    if (loadedMaterials.length > 0) {
-      for (let i = 0; i < loadedModels.length; i++) {
-        loadedModels[i].material = loadedMaterials[i];
-        loadedModels[i].needsUpdate = true;
+
+    for (let i = 0; i < newMatArr.length; i++) {
+        lastSelectedToMaterial.material = newMatArr[i];
+        lastSelectedToMaterial.needsUpdate = true;
         console.log("Materials Loaded!");
-      }
-    } else {
-      alert("No materials loaded!!");
     }
+    
 }
   
 function onChooseFile(event, onLoadFileHandler) {
@@ -375,4 +386,13 @@ function onChooseFile(event, onLoadFileHandler) {
     let fr = new FileReader();
     fr.onload = onLoadFileHandler;
     fr.readAsText(file);
+    
+}
+
+function transforms(n){
+    if(n == 1){
+        control.setMode( "translate" );
+    }else if(n == 2){
+        control.setMode( "rotate" );
+    }
 }

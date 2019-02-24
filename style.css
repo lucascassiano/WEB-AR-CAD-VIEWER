@@ -13,6 +13,11 @@ body{
     z-index: 2;
 } 
 
+#optBt{
+    position: absolute;
+    display: none;
+}
+
 /* intial page */
 #initialPage{
 
@@ -72,3 +77,22 @@ body{
     border-bottom-right-radius: 40px;
     
 }
+/* editor */
+
+.transforms{
+    width: 0px;
+}
+
+/* viewer */
+#loadBG{
+    background-color: blue;
+}
+
+@media only screen and (max-width: 600px) {
+    
+    #loadBG{
+        background-color: red;
+    }
+    
+  }
+

@@ -9,7 +9,7 @@
     <link type="text/css" rel="stylesheet" href="misc/bootstrap.css"/>
     <link type="text/css" rel="stylesheet" href="style.css"/>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
     <div id="overlay" class="containter-fluid">
        
@@ -33,53 +33,52 @@
 
             <div id="toolbar" class="col">
 
-                    <div class="btn-group dropright marginBT row">
-                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <img id="imgBtLoad" class="imgBT" src="misc/imgs/move.png"/>
-                            </button>
-                            <div class="dropdown-menu">
-                                <button class="dropdown-item" type="button">
-                                   <img id="imgBtPreview" class="imgBT text-center" src="misc/imgs/position.png">
-                                </button>
-                                <button class="dropdown-item" type="button">
-                                    <img id="imgBtPreview" class="imgBT text-center" src="misc/imgs/rotate.png">
-                                </button>
-                                
-                            </div>
-                        </div>
+                <div class="btn-group dropright marginBT row">
+                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img id="imgBtLoad" class="imgBT" src="misc/imgs/move.png"/>
+                    </button>
+                    <div class="dropdown-menu transforms">
+                        <button class="dropdown-item " type="button" onclick="transforms('1')">
+                            <img id="imgBtPreview" class="imgBT text-center" src="misc/imgs/position.png">
+                        </button>
+                        <button class="dropdown-item " type="button" onclick="transforms('2')">
+                            <img id="imgBtPreview" class="imgBT text-center" src="misc/imgs/rotate.png">
+                        </button>
+                        
+                    </div>
+                </div>
 
-                    <button type="button" class="btn btn-secondary marginBT row" onclick="saveKeyframe()" data-toggle="tooltip" data-placement="right" title="Preview"><img id="imgBtPreview"  class="imgBT" src="misc/imgs/keyframe.png"></button>
-                    <button type="button" class="btn btn-secondary marginBT row" onclick="preview()"> <img id="imgBtPreview"  class="imgBT" src="misc/imgs/preview.png"></button>
+                <button type="button" class="btn btn-secondary marginBT row" onclick="saveKeyframe()" data-toggle="tooltip" data-placement="right" title="Preview"><img id="imgBtPreview"  class="imgBT" src="misc/imgs/keyframe.png"></button>
+                <button type="button" class="btn btn-secondary marginBT row" onclick="preview()"> <img id="imgBtPreview"  class="imgBT" src="misc/imgs/preview.png"></button>
 
-                    <div class="btn-group dropright marginBT row">
+                <div class="btn-group dropright marginBT row">
+                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img id="imgBtLoad" class="imgBT" src="misc/imgs/export.png"/>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item"  onclick="exportContent('1')"  href="#" > 
+                            Export to Viewer</a>
+                        <a class="dropdown-item" onclick="exportContent('2')" href="#" > 
+                            Export to File</a>
+                    </div>
+                </div>
+
+                <div class="btn-group dropright marginBT row">
                         <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img id="imgBtLoad" class="imgBT" src="misc/imgs/export.png"/>
+                                <img id="imgBtLoad" class="imgBT" src="misc/imgs/load.png"/>
                         </button>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item"  onclick="exportContent('1')"  href="#" > 
-                                Export to Viewer</a>
-                            <a class="dropdown-item" onclick="exportContent('2')" href="#" > 
-                                Export to File</a>
+                            <input type="file" id="selectedModel" style="display: none;" onchange="onChooseFile(event, onModelLoad.bind(this))" />
+                            
+                            <a class="dropdown-item" onclick="document.getElementById('selectedModel').click();" href="#" > 
+                                Load 3D Model</a>
+                           
                         </div>
-                    </div>
+                </div>
 
-                    <div class="btn-group dropright marginBT row">
-                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <img id="imgBtLoad" class="imgBT" src="misc/imgs/load.png"/>
-                            </button>
-                            <div class="dropdown-menu">
-                                <input type="file" id="selectedModel" style="display: none;" onchange="onChooseFile(event, onModelLoad.bind(this))" />
-                                <input type="file" id="selectedMaterial" style="display: none;" onchange="onChooseFile(event, onMaterialLoad.bind(this))" />
-                                <a class="dropdown-item" onclick="document.getElementById('selectedModel').click();" href="#" > 
-                                    Load 3D Model</a>
-                                <a class="dropdown-item" onclick="document.getElementById('selectedMaterial').click();" href="#" > 
-                                    Load Material</a>
-                            </div>
-                    </div>
-
-                    <button type="button" class="btn btn-secondary viewerBT row" onclick="initViewer()"> 
-                        <img id="imgBtPreview"  class="imgBT" src="misc/imgs/smartphone.png">
-                    </button>
+                <button type="button" class="btn btn-secondary viewerBT row" onclick="initViewer()"> 
+                    <img id="imgBtPreview"  class="imgBT" src="misc/imgs/smartphone.png">
+                </button>
         
             </div>
             
@@ -92,10 +91,24 @@
 
 
         <div id="viewer">
-            <input type="file" id="selectedModel" onchange="onChooseFile(event, onModelLoad.bind(this))" />
+            <input type="file" id="selectedModel" style="display: none;" onchange="onChooseFile(event, onModelLoad.bind(this))" />
+            <a id="loadBG" onclick="document.getElementById('selectedModel').click();" href="#" > 
+                <img id="imgBtLoad" class="imgBT" src="misc/imgs/load.png"/>
+            </a>
+
             <button onclick="previewer()">Preview Viewer</button>
+
         </div>
         
+    </div>
+
+    <div id="optBt">
+        <div class="list-group">
+            <input type="file" id="selectedMaterial" style="display: none;" onchange="onChooseFile(event, onMaterialLoad.bind(this))" />
+            <a class="list-group-item" onclick="document.getElementById('selectedMaterial').click();" href="#" > 
+                Load Material</a>
+           
+          </div>
     </div>
 
 
@@ -104,9 +117,6 @@
 
 
 
-
-
-    
     <script type="text/javascript" src="misc/jquery.js"></script>
     <script type="text/javascript" src="misc/popper.js"></script>
     <script type="text/javascript" src="misc/bootstrap.js"></script>

@@ -164,7 +164,7 @@ function previewer(){
   pathFollower.preview(exportObj, exportPath);
 }
 
-function onModelLoad(event) {
+function onModelLoadViewer(event) {
    let text = event.target.result;
 
    let toAdd = geoFile.importInAR(text);
