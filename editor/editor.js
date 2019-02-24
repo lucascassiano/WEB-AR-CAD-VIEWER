@@ -11,19 +11,29 @@ var keyframes = [];
 var pathPoints = [];
 var pathObjs = [];
 
-var exportPath = [];
-var exportObj = [];
+var exportPath = null;
+var exportObj = null;
+
+let loadedModels = [];
+let loadedMaterials = [];
 
 
 var pathFollower = new PathFollower();
-
+var geoFile = new GeoFile();
 
 function initEditor(){
+    document.getElementById("title").style.display = "none";
+    document.getElementById("initialPage").style.display = "none";
+    document.getElementById("editor").style.display = "block";
+
+
     scene = new THREE.Scene();
-    scene.background = new THREE.Color("rgb(63,63,63)");
+    scene.background = new THREE.Color("rgb(120,120,120)");
     camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
 
-    
+    var light = new THREE.AmbientLight(0x404040, 2); // soft white light
+    scene.add(light);
+
     renderer = new THREE.WebGLRenderer({
         antialias: true,
         alpha: true
@@ -71,6 +81,11 @@ function initEditor(){
     cube.position.set(1,0,1);
     scene.add( cube );
     objects.push(cube);
+    console.log(cube);
+
+    
+
+    
 
     camera.position.z = 5;
 
@@ -266,30 +281,98 @@ function preview(){
 }
 
 
-function exportContent(){
-    let tempObj = [];
-    for(let i = 0; i < pathObjs.length; i++){
-        tempObj[i]= pathObjs[i];
-        tempObj[i].position.copy(pathPoints[i][0]);
+function exportContent(n){
+    if(n == 1){
+        let tempObj = [];
+        for(let i = 0; i < pathObjs.length; i++){
+            tempObj[i]= pathObjs[i];
+            tempObj[i].position.copy(pathPoints[i][0]);
+        }
+        exportObj = tempObj;
+        exportPath = pathPoints;
+    }else{
+        let geoText = geoFile.toText(objects);
+        let keyText = geoFile.keysToText(pathObjs,pathPoints);
+        geoFile.exportToAR(geoText, keyText, "teste");
     }
-    exportObj = tempObj;
-    exportPath = pathPoints;
+    
 
+    
 
-   // download('test.arcad', 'Hello world!');
+  //download('test.arcad', 'Hello world!');
 }
 
-function download(filename, text) {
-    var pom = document.createElement('a');
-    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-    pom.setAttribute('download', filename);
-
-    if (document.createEvent) {
-        var event = document.createEvent('MouseEvents');
-        event.initEvent('click', true, true);
-        pom.dispatchEvent(event);
+function onModelLoad(event) {
+    let modelData = event.target.result;
+  
+    let objLoader = new THREE.OBJLoader();
+  
+    var geometry = objLoader.parse(modelData);
+    let pos = new THREE.Vector3(0, 0, 12);
+  
+    if (geometry.children.length > 0) {
+      for (let i = 0; i < geometry.children.length; i++) {
+        
+        let obj = new THREE.Mesh(
+          geometry.children[i].geometry,
+          geometry.children[i].material
+        );
+        obj.position.copy(pos);
+        scene.add(obj);
+        loadedModels.push(obj);
+        objects.push(obj);
+      }
+    } else {
+      let obj = new THREE.Mesh(geometry.geometry, geometry.material);
+      obj.position.copy(pos);
+      scene.add(obj);
+  
+      loadedModels.push(obj);
+      objects.push(obj);
     }
-    else {
-        pom.click();
+}
+  
+function onMaterialLoad(event) {
+    let materialData = event.target.result;
+    let mtlLoader = new THREE.MTLLoader();
+    let material = mtlLoader.parse(materialData);
+    let info = material.materialsInfo;
+    let tempMat = [];
+    let newMatArr;
+  
+    for (let name in info) {
+      let newM = material.createMaterial_(name);
+      tempMat.push(newM);
     }
+  
+    if(tempMat.length > 1){
+      newMatArr = material.getAsArray();
+      loadedMaterials.push(newMatArr);
+    }else if(tempMat.length == 1){
+      loadedMaterials.push(tempMat[0]);
+    }
+  
+    if (loadedMaterials.length > 0) {
+      for (let i = 0; i < loadedModels.length; i++) {
+        loadedModels[i].material = loadedMaterials[i];
+        loadedModels[i].needsUpdate = true;
+        console.log("Materials Loaded!");
+      }
+    } else {
+      alert("No materials loaded!!");
+    }
+}
+  
+function onChooseFile(event, onLoadFileHandler) {
+    if (typeof window.FileReader !== "function")
+      throw "The file API isn't supported on this browser.";
+    let input = event.target;
+    if (!input) throw "The browser does not properly implement the event object";
+    if (!input.files)
+      throw "This browser does not support the `files` property of the file input.";
+    if (!input.files[0]) return undefined;
+    let file = input.files[0];
+    let fr = new FileReader();
+    fr.onload = onLoadFileHandler;
+    fr.readAsText(file);
 }

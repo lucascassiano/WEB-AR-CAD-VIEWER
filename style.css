@@ -3,5 +3,72 @@ body{
     overflow: hidden;
 }
 #overlay{
+   
+}
+#editor{
+    display: none;
+}
+#viewer{
+    display: none;
+    z-index: 2;
+} 
+
+/* intial page */
+#initialPage{
+
+    /* position: absolute;
+    top: 100px;
+    left: 0; */
+
+    
+}
+#img1{
+    margin-left: 0;
+    padding-left: 0;
+
+   
+    background-color: blue;
+    border-style: solid;
+    border-radius: 40px;
+}
+#img2{
+    margin-right: 0;
+    padding-right: 0;
+
+    
+    background-color: red;
+    border-style: solid;
+    border-radius: 40px;
+}
+
+/* toolbar */
+.marginBT{
+    margin-top: 20px;
+}
+
+.viewerBT{
+    margin-top: 40px;
+    
+}
+
+#imgBtLoad{
+    width: 15px;
+    height: 15px;
+}
+#imgBtPreview{
+    width: 30px;
+    height: 25px;
+}
+
+#toolbar{
+    
     position: absolute;
+    top: 100px;
+    left: 0;
+    background-color: white;
+    width: 30px;
+    height: 400px;
+    border-top-right-radius: 40px;
+    border-bottom-right-radius: 40px;
+    
 }

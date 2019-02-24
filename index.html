@@ -6,31 +6,117 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 
+    <link type="text/css" rel="stylesheet" href="misc/bootstrap.css"/>
     <link type="text/css" rel="stylesheet" href="style.css"/>
 </head>
 <body>
-    <div id="overlay">
-        <h1>CAD AR VIEWER</h1>
-        <button onclick="initEditor()">Editor</button>
-        <button onclick="initViewer()">Viewer</button>
 
-        <div id="editor">
-            <button onclick="saveKeyframe()">Keyframe</button>
-            <button onclick="preview()">Preview</button>
-            <button onclick="exportContent()">Export</button>
+    <div id="overlay" class="containter-fluid">
+       
+        <div id="title" class="row" ><h1 class="col text-center">CAD AR VIEWER</h1></div>
+        <div id="initialPage"  class="row" >
+            
+            
+                <div class="col text-center" >
+                    <button onclick="initEditor()" >Editor</button>
+                    <div id="img1"></div>
+                </div>
+            
+                <div class="col text-center">
+                    <button onclick="initViewer()">Viewer</button>
+                    <div id="img2"></div>
+                </div>
+            
         </div>
+
+        <div id="editor" class="row">
+
+            <div id="toolbar" class="col">
+
+                    <div class="btn-group dropright marginBT row">
+                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <img id="imgBtLoad" class="imgBT" src="misc/imgs/move.png"/>
+                            </button>
+                            <div class="dropdown-menu">
+                                <button class="dropdown-item" type="button">
+                                   <img id="imgBtPreview" class="imgBT text-center" src="misc/imgs/position.png">
+                                </button>
+                                <button class="dropdown-item" type="button">
+                                    <img id="imgBtPreview" class="imgBT text-center" src="misc/imgs/rotate.png">
+                                </button>
+                                
+                            </div>
+                        </div>
+
+                    <button type="button" class="btn btn-secondary marginBT row" onclick="saveKeyframe()" data-toggle="tooltip" data-placement="right" title="Preview"><img id="imgBtPreview"  class="imgBT" src="misc/imgs/keyframe.png"></button>
+                    <button type="button" class="btn btn-secondary marginBT row" onclick="preview()"> <img id="imgBtPreview"  class="imgBT" src="misc/imgs/preview.png"></button>
+
+                    <div class="btn-group dropright marginBT row">
+                        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <img id="imgBtLoad" class="imgBT" src="misc/imgs/export.png"/>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item"  onclick="exportContent('1')"  href="#" > 
+                                Export to Viewer</a>
+                            <a class="dropdown-item" onclick="exportContent('2')" href="#" > 
+                                Export to File</a>
+                        </div>
+                    </div>
+
+                    <div class="btn-group dropright marginBT row">
+                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <img id="imgBtLoad" class="imgBT" src="misc/imgs/load.png"/>
+                            </button>
+                            <div class="dropdown-menu">
+                                <input type="file" id="selectedModel" style="display: none;" onchange="onChooseFile(event, onModelLoad.bind(this))" />
+                                <input type="file" id="selectedMaterial" style="display: none;" onchange="onChooseFile(event, onMaterialLoad.bind(this))" />
+                                <a class="dropdown-item" onclick="document.getElementById('selectedModel').click();" href="#" > 
+                                    Load 3D Model</a>
+                                <a class="dropdown-item" onclick="document.getElementById('selectedMaterial').click();" href="#" > 
+                                    Load Material</a>
+                            </div>
+                    </div>
+
+                    <button type="button" class="btn btn-secondary viewerBT row" onclick="initViewer()"> 
+                        <img id="imgBtPreview"  class="imgBT" src="misc/imgs/smartphone.png">
+                    </button>
+        
+            </div>
+            
+        
+           
+
+        </div>
+
+
+
+
         <div id="viewer">
+            <input type="file" id="selectedModel" onchange="onChooseFile(event, onModelLoad.bind(this))" />
             <button onclick="previewer()">Preview Viewer</button>
         </div>
         
     </div>
 
+
+
     <div id="renderDiv"></div>
 
+
+
+
+
+    
+    <script type="text/javascript" src="misc/jquery.js"></script>
+    <script type="text/javascript" src="misc/popper.js"></script>
+    <script type="text/javascript" src="misc/bootstrap.js"></script>
     <script type="text/javascript" src="misc/three.js"></script>
+    <script type="text/javascript" src="misc/OBJLoader.js"></script>
+    <script type="text/javascript" src="misc/MTLLoader.js"></script>
     <script type="text/javascript" src="misc/transformControls.js"></script>
     <script type="text/javascript" src="misc/Orbit.js"></script>
     <script type="text/javascript" src="misc/pathFollower.js"></script>
+    <script type="text/javascript" src="misc/geoFile.js"></script>
     <script type="text/javascript" src="editor/editor.js"></script>
 
   

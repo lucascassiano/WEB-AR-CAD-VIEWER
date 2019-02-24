@@ -5,7 +5,6 @@ class PathFollower{
         }else{
             this.divideSize = n;
         }
-        this.moves;
         this.previewState;
         this.previewEnable = false;
         this.t = 0;
