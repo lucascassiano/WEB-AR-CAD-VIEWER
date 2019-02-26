@@ -1,10 +1,5 @@
 class PathFollower{
-    constructor(n){
-        if(n == null){
-            this.divideSize = 100;
-        }else{
-            this.divideSize = n;
-        }
+    constructor(){
         this.previewState;
         this.previewEnable = false;
         this.t = 0;
@@ -15,49 +10,56 @@ class PathFollower{
 
     preview(obj, path){
         this.objArr = obj;
-        this.pathArr = path
+        this.pathArr = path;
+        //console.log(path[0].rotationQuat);
         for(let i = 0; i < obj.length; i++){
-            obj[i].position.copy(path[i][0]);
+            obj[i].position.copy(path[i].position[0]);
+            obj[i].quaternion.copy(path[i].rotationQuat[0]);
         }
         this.previewState = [];
 
         for(let i = 0; i < obj.length; i++){
             this.previewState.push(0);
         }
-
+        
         this.previewEnable = true;
     }
 
     update(){
         if(this.previewEnable){
+           
             for(let i = 0; i < this.objArr.length; i++){
-                if(this.pathArr[i][this.previewState[i]] != null){
+                if(this.pathArr[i].position[this.previewState[i]] != null){
 
                 
                     let currentPos = new THREE.Vector3();
-                    currentPos.copy(this.objArr[i].position)
+                    currentPos.copy(this.objArr[i].position);
                     let nextPos = new THREE.Vector3();
-                    nextPos.copy( this.pathArr[i][this.previewState[i]] );
+                    nextPos.copy( this.pathArr[i].position[this.previewState[i]] );
+
+
+                    let newPos = new THREE.Vector3();
+                    newPos.lerpVectors(currentPos, nextPos, this.ease(this.t));
                     
-                    var newX = this.lerp(currentPos.x, nextPos.x, this.ease(this.t));   
-                    var newY = this.lerp(currentPos.y, nextPos.y, this.ease(this.t));   
-                    var newZ = this.lerp(currentPos.z, nextPos.z, this.ease(this.t)); 
-                    this.objArr[i].position.set(newX, newY, newZ); 
+              
+                    this.objArr[i].quaternion.slerp(this.pathArr[i].rotationQuat[this.previewState[i]], this.ease(this.t));
+                    this.objArr[i].position.copy(newPos); 
+                    
+
                     this.t += this.dt;
 
                     if(currentPos.equals(nextPos)){
                         this.previewState[i] =  this.previewState[i] + 1;
                         this.t = 0;
+                        
                     }
                 }   
             }
+           
         }
 
 
     }
-
-    lerp(a, b, t) {return a + (b - a) * t}
-
     ease(t) { return t<0.5 ? 2*t*t : -1+(4-2*t)*t}
 }
 

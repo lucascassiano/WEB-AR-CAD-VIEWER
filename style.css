@@ -9,6 +9,7 @@ body{
     display: none;
 }
 #viewer{
+    position: absolute;
     display: none;
     z-index: 2;
 } 
@@ -20,7 +21,7 @@ body{
 
 /* intial page */
 #initialPage{
-
+    
     /* position: absolute;
     top: 100px;
     left: 0; */

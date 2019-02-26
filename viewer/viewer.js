@@ -9,6 +9,7 @@ function initViewer(){
   document.getElementById("title").style.display = "none";
   document.getElementById("initialPage").style.display = "none";
   document.getElementById("viewer").style.display = "block";
+  document.getElementById("editor").style.display = "none";
   
     var onRenderFcts = [];
 
@@ -168,6 +169,8 @@ function onModelLoadViewer(event) {
    let text = event.target.result;
 
    let toAdd = geoFile.importInAR(text);
+
+   console.log(toAdd);
 
    for(let i = 0; i < toAdd.meshesArr.length; i++){
       objects.push(toAdd.meshesArr[i].mesh);

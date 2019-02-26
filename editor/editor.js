@@ -18,9 +18,14 @@ var exportObj = null;
 let loadedModels = [];
 let loadedMaterials = [];
 
+var popMenu = false;
 
 var pathFollower = new PathFollower();
 var geoFile = new GeoFile();
+
+
+var elementPicker = document.getElementById("colorPicker");
+var picker = new Picker(elementPicker);
 
 function initEditor(){
     document.getElementById("title").style.display = "none";
@@ -126,24 +131,30 @@ function onDocumentMouseDown(event) {
     
     
     if(event.button == 0){
-        document.getElementById("optBt").style.display = "none";
-        if(intersects.length > 0){ 
-            if(lastSelected == null){
-                control.attach(intersects[0].object);
-                lastSelected = intersects[0].object;
-                lastSelected.material.opacity = 0.75;
+        if(!popMenu){
 
-            } else if(lastSelected.id != intersects[0].object.id ){
-                control.detach(lastSelected);
-                lastSelected.material.opacity = 1;
-
-                control.attach(intersects[0].object);
-                lastSelected = intersects[0].object;
-                lastSelected.material.opacity = 0.75;
-            }
-        
+            if(intersects.length > 0){ 
+                if(lastSelected == null){
+                    
+                    control.attach(intersects[0].object);
+                    lastSelected = intersects[0].object;
+                    lastSelected.material.opacity = 0.75;
+                    console.log(lastSelected);
+    
+                } else if(lastSelected.id != intersects[0].object.id ){
+                    
+                    control.detach(lastSelected);
+                    lastSelected.material.opacity = 1;
+    
+                    control.attach(intersects[0].object);
+                    lastSelected = intersects[0].object;
+                    lastSelected.material.opacity = 0.75;
+                }
             
+               
+            }
         }
+       
     }else if(event.button == 2){
         
         if(intersects.length > 0){ 
@@ -151,11 +162,11 @@ function onDocumentMouseDown(event) {
             document.getElementById("optBt").style.display = "block";
             document.getElementById("optBt").style.top = String(event.clientY) + "px";
             document.getElementById("optBt").style.left= String(event.clientX) + "px";
-
-
-
+            
 
             lastSelectedToMaterial = intersects[0].object;
+            popMenu = true;
+           
         }
     }
          
@@ -220,6 +231,10 @@ function saveKeyframe(){
     let tempPos = new THREE.Vector3();
     tempPos.copy(lastSelected.position);
 
+    let tempRot= new THREE.Quaternion();
+    tempRot.copy(lastSelected.quaternion);
+    console.log(tempRot);
+
     var material = new THREE.LineBasicMaterial({
         color: "rgb(255, 00, 00)"
     });
@@ -238,11 +253,11 @@ function saveKeyframe(){
                 var line = new THREE.Line(geometry, material);
 
                 keyframes[i].path = line;
-                keyframes[i].pathPoints = line.geometry.vertices;
-
+                keyframes[i].position = line.geometry.vertices;
+                keyframes[i].rotation.push(tempRot);
                 
-                pathPoints[i] = line.geometry.vertices;
-
+                pathPoints[i].position = line.geometry.vertices;
+                pathPoints[i].rotationQuat = keyframes[i].rotation;
                 scene.add(keyframes[i].path);
 
                 found = true;
@@ -258,16 +273,25 @@ function saveKeyframe(){
         
             var line = new THREE.Line(geometry, material);
            
+            let rotArr = [];
+            rotArr.push(tempRot);
+            
             let frame = {
                 obj: lastSelected,
                 path: line,
-                pathPoints: line.geometry.vertices
+                position: line.geometry.vertices,
+                rotation: rotArr
             }
 
             scene.add(frame.path);
 
             pathObjs.push(lastSelected);
-            pathPoints.push(line.geometry.vertices)
+            
+            let transform = {
+                position: line.geometry.vertices,
+                rotationQuat: rotArr
+            }
+            pathPoints.push(transform);
 
             keyframes.push(frame);
         }
@@ -278,17 +302,26 @@ function saveKeyframe(){
         geometry.vertices.push(tempPos);
     
         var line = new THREE.Line(geometry, material);
+
+        let rotArr = [];
+        rotArr.push(tempRot);
         
         let frame = {
             obj: lastSelected,
             path: line,
-            pathPoints: line.geometry.vertices
+            position: line.geometry.vertices,
+            rotation: rotArr
         }
 
         scene.add(frame.path);
 
         pathObjs.push(lastSelected);
-        pathPoints.push(line.geometry.vertices)
+
+        let transform = {
+            position: line.geometry.vertices,
+            rotationQuat: rotArr
+        }
+        pathPoints.push(transform);
 
         keyframes.push(frame);
     }
@@ -312,10 +345,9 @@ function exportContent(n){
     }else{
         let geoText = geoFile.toText(objects);
         let keyText = geoFile.keysToText(pathObjs,pathPoints);
-        geoFile.exportToAR(geoText, keyText, "teste");
+        console.log(keyText);
+        //geoFile.exportToAR(geoText, keyText, "teste");
     }
-    
-  //download('test.arcad', 'Hello world!');
 }
 
 function onModelLoad(event) {
@@ -323,15 +355,20 @@ function onModelLoad(event) {
   
     let objLoader = new THREE.OBJLoader();
   
-    var geometry = objLoader.parse(modelData);
+    let objArr = objLoader.parse(modelData);
+    
+   
     let pos = new THREE.Vector3(0, 0, 0);
   
-    if (geometry.children.length > 0) {
-      for (let i = 0; i < geometry.children.length; i++) {
-        
+    if (objArr.children.length > 0) {
+      for (let i = 0; i < objArr.children.length; i++) {
+
+        let geometry = new THREE.Geometry();
+        geometry.fromBufferGeometry(  objArr.children[i].geometry );
+
         let obj = new THREE.Mesh(
-          geometry.children[i].geometry,
-          geometry.children[i].material
+          geometry,
+          objArr.children[i].material
         );
         obj.position.copy(pos);
         scene.add(obj);
@@ -339,7 +376,10 @@ function onModelLoad(event) {
         objects.push(obj);
       }
     } else {
-      let obj = new THREE.Mesh(geometry.geometry, geometry.material);
+      let geometry = new THREE.Geometry();
+      geometry.fromBufferGeometry( objArr.geometry);
+
+      let obj = new THREE.Mesh(geometry, objArr.material);
       obj.position.copy(pos);
       scene.add(obj);
   
@@ -371,7 +411,8 @@ function onMaterialLoad(event) {
         lastSelectedToMaterial.needsUpdate = true;
         console.log("Materials Loaded!");
     }
-    
+    document.getElementById("optBt").style.display = "none";
+    popMenu = false;
 }
   
 function onChooseFile(event, onLoadFileHandler) {
@@ -395,4 +436,25 @@ function transforms(n){
     }else if(n == 2){
         control.setMode( "rotate" );
     }
+}
+
+function deselect(){
+    control.detach(lastSelected);
+    lastSelected.material.opacity = 1;
+    lastSelected = null;
+    document.getElementById("optBt").style.display = "none";
+    popMenu = false;
+}
+
+function setClick(){
+    popMenu = true;
+}
+
+function setModelColor(){
+    picker.onDone = function(color) {
+        let newColor = new THREE.Color(color.rgbaString);
+        lastSelected.material.color = newColor;
+        document.getElementById("optBt").style.display = "none";
+        popMenu = false;
+    };
 }

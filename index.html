@@ -91,8 +91,8 @@
 
 
         <div id="viewer">
-            <input type="file" id="selectedModel" style="display: none;" onchange="onChooseFile(event, onModelLoad.bind(this))" />
-            <a id="loadBG" onclick="document.getElementById('selectedModel').click();" href="#" > 
+            <input type="file" id="selectedModelViewer" style="display: none;" onchange="onChooseFile(event, onModelLoadViewer.bind(this))" />
+            <a id="loadBG" onclick="document.getElementById('selectedModelViewer').click();" href="#" > 
                 <img id="imgBtLoad" class="imgBT" src="misc/imgs/load.png"/>
             </a>
 
@@ -105,9 +105,9 @@
     <div id="optBt">
         <div class="list-group">
             <input type="file" id="selectedMaterial" style="display: none;" onchange="onChooseFile(event, onMaterialLoad.bind(this))" />
-            <a class="list-group-item" onclick="document.getElementById('selectedMaterial').click();" href="#" > 
-                Load Material</a>
-           
+            <button type="button" class="list-group-item list-group-item-action" onclick="document.getElementById('selectedMaterial').click();">Load Material</button>
+            <button type="button" class="list-group-item list-group-item-action" onclick="deselect()">Deselect</button>
+            <button id="colorPicker" type="button" class="list-group-item list-group-item-action" onclick="setModelColor(this)">Change Color</button>
           </div>
     </div>
 
@@ -127,6 +127,7 @@
     <script type="text/javascript" src="misc/Orbit.js"></script>
     <script type="text/javascript" src="misc/pathFollower.js"></script>
     <script type="text/javascript" src="misc/geoFile.js"></script>
+    <script type="text/javascript" src="misc/vanilla-picker.js"></script>
     <script type="text/javascript" src="editor/editor.js"></script>
 
   

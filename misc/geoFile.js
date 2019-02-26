@@ -279,7 +279,6 @@ class GeoFile{
     } 
 
     keysToText(arrObjs, arrPath){
-        
         let vertices;
         for(let i = 0; i < arrPath.length; i++){
             if(vertices == null){
@@ -287,17 +286,20 @@ class GeoFile{
             }else{
                 vertices += " k "+ String(arrObjs[i].id);
             }
-           
-            for(let j = 0; j < arrPath[i].length; j++){
-                
-                let vX = arrPath[i][j].x;
-                let vY = arrPath[i][j].y;
-                let vZ = arrPath[i][j].z;
     
-                let v = " v " + String(vX) +  " " +  String(vY) + " " + String(vZ) + ";";
+            for(let j = 0; j < arrPath[i].position.length; j++){
+                
+                let vX = arrPath[i].position[j].x;
+                let vY = arrPath[i].position[j].y;
+                let vZ = arrPath[i].position[j].z;
+
+                let rX = arrPath[i].rotation[j].x;
+                let rY = arrPath[i].rotation[j].y;
+                let rZ = arrPath[i].rotation[j].z;
+    
+                let v = " v " + String(vX) +  " " +  String(vY) + " " + String(vZ) + ";" + " r " + String(rX) +  " " +  String(rY) + " " + String(rZ) + ";";
                 
                 vertices += v;
-                
             }
            
         }
@@ -307,10 +309,10 @@ class GeoFile{
     keysToArr(text){
         let keys = [];
         
-
         for(let i = 0; i < text.length; i++){
             if(text[i] == "k"){
-                let vertices = [];
+                let position = [];
+                let rotation = [];
                 let indexJ = i + 2;
                 let indexK;
 
@@ -336,9 +338,14 @@ class GeoFile{
                 
                         let result = this.getVector(text, k);
                         k = result.j;
-                        vertices.push(result.v);
+                        position.push(result.v);
                         
-                       
+                    }else if(text[k] == "r"){
+
+                        let result = this.getVector(text, k);
+                        k = result.j;
+                        rotation.push(result.v);
+                        
                     }else if(text[k] == "k"){
                         break;
                     }
@@ -346,7 +353,8 @@ class GeoFile{
 
                let frames = {
                    id: id,
-                   vertices: vertices
+                   position: position,
+                   rotation: rotation
                }
                keys.push(frames);
             }
