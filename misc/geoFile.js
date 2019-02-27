@@ -206,7 +206,15 @@ class GeoFile{
         return meshesArr;
     }
 
-    getVector(text, j){
+    getVector(text, j, type){
+        
+        if(type == null){
+            type = "v3";
+        }
+
+        let v;
+
+
         // X
         let indexJ = j + 2;
         let indexK;
@@ -267,8 +275,38 @@ class GeoFile{
             }
         }
 
+        if(type = "v3"){
 
-        let v = new THREE.Vector3(parseFloat(n1),parseFloat(n2),parseFloat(n3));
+            v = new THREE.Vector3(parseFloat(n1),parseFloat(n2),parseFloat(n3));
+
+        }else if(type == "v4"){
+                
+            //  2
+            let indexJ4 = indexK3 + 1;
+            let indexK4;
+            for(let k = indexJ4; k < text.length; k++){
+                if(text[k] == ";"){
+                    indexK4 = k;
+                    break;
+                }
+            }
+
+            let n4;
+
+            for(let k = indexJ4; k < indexK4; k++){
+                if(n4 == null){
+                    n4 = text[k];
+                }else{
+                    n4 += text[k];
+                }
+            }
+
+            v = new THREE.Quaternion(parseFloat(n1),parseFloat(n2),parseFloat(n3), parseFloat(n4));
+
+        }
+
+
+        
 
         let result = {
             j:indexK3,
@@ -293,11 +331,12 @@ class GeoFile{
                 let vY = arrPath[i].position[j].y;
                 let vZ = arrPath[i].position[j].z;
 
-                let rX = arrPath[i].rotation[j].x;
-                let rY = arrPath[i].rotation[j].y;
-                let rZ = arrPath[i].rotation[j].z;
-    
-                let v = " v " + String(vX) +  " " +  String(vY) + " " + String(vZ) + ";" + " r " + String(rX) +  " " +  String(rY) + " " + String(rZ) + ";";
+                let rX = arrPath[i].rotationQuat[j]._x;
+                let rY = arrPath[i].rotationQuat[j]._y;
+                let rZ = arrPath[i].rotationQuat[j]._z;
+                let rW = arrPath[i].rotationQuat[j]._w;
+
+                let v = " v " + String(vX) +  " " +  String(vY) + " " + String(vZ) + ";" + " q " + String(rX) +  " " +  String(rY) + " " + String(rZ) + " " + String(rW) + ";";
                 
                 vertices += v;
             }
@@ -340,9 +379,9 @@ class GeoFile{
                         k = result.j;
                         position.push(result.v);
                         
-                    }else if(text[k] == "r"){
+                    }else if(text[k] == "q"){
 
-                        let result = this.getVector(text, k);
+                        let result = this.getVector(text, k, "v4");
                         k = result.j;
                         rotation.push(result.v);
                         

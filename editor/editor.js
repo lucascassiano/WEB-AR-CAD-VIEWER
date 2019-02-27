@@ -15,10 +15,15 @@ var pathObjs = [];
 var exportPath = null;
 var exportObj = null;
 
-let loadedModels = [];
-let loadedMaterials = [];
-
 var popMenu = false;
+var overMenu = false;
+
+var keysOpen = false;
+
+var lastKeySelected = new THREE.Vector2();
+
+var pathUpdate = false;
+
 
 var pathFollower = new PathFollower();
 var geoFile = new GeoFile();
@@ -34,11 +39,16 @@ function initEditor(){
 
 
     scene = new THREE.Scene();
-    scene.background = new THREE.Color("rgb(120,120,120)");
+    scene.background = new THREE.Color("rgb(255,255,255)");
     camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
 
-    var light = new THREE.AmbientLight(0x404040, 2); // soft white light
+    var light = new THREE.AmbientLight(0x404040, 3); // soft white light
     scene.add(light);
+
+    var light = new THREE.DirectionalLight( 0xffffff, 1, 100 );
+    light.position.set( 10, 50, 0 ); 			//default; light shining from top
+    light.castShadow = true;            // default false
+    scene.add( light );
 
     renderer = new THREE.WebGLRenderer({
         antialias: true,
@@ -46,6 +56,8 @@ function initEditor(){
     });
     renderer.setClearColor(new THREE.Color("lightgrey"), 0);
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     var renderDiv = document.getElementById('renderDiv');
 
     if(renderDiv.hasChildNodes()){
@@ -69,10 +81,11 @@ function initEditor(){
     } );
     scene.add(control);
 
-    var size = 10;
-    var divisions = 10;
+    var size = 15;
+    var divisions = 15;
 
     var gridHelper = new THREE.GridHelper( size, divisions );
+    gridHelper.recieveShadows = true;
     scene.add( gridHelper );
 
     // var geometry = new THREE.BoxGeometry( 1, 1, 1 );
@@ -103,7 +116,10 @@ function initEditor(){
 
 function animate() {
     requestAnimationFrame( animate );
-    pathFollower.update();
+    if(pathUpdate){
+        pathFollower.update();
+    }
+    
     
     render();
 };
@@ -139,7 +155,6 @@ function onDocumentMouseDown(event) {
                     control.attach(intersects[0].object);
                     lastSelected = intersects[0].object;
                     lastSelected.material.opacity = 0.75;
-                    console.log(lastSelected);
     
                 } else if(lastSelected.id != intersects[0].object.id ){
                     
@@ -153,23 +168,39 @@ function onDocumentMouseDown(event) {
             
                
             }
+        }else{
+            if(event.path[0].localName == "canvas" ){
+                document.getElementById("optBt").style.display = "none";
+                popMenu = false;
+            }
         }
        
     }else if(event.button == 2){
         
         if(intersects.length > 0){ 
-
-            document.getElementById("optBt").style.display = "block";
-            document.getElementById("optBt").style.top = String(event.clientY) + "px";
-            document.getElementById("optBt").style.left= String(event.clientX) + "px";
-            
-
-            lastSelectedToMaterial = intersects[0].object;
-            popMenu = true;
+            if(lastSelected != null){
+                document.getElementById("optBt").style.display = "block";
+                document.getElementById("optBt").style.top = String(event.clientY) + "px";
+                document.getElementById("optBt").style.left= String(event.clientX) + "px";
+                
+    
+                lastSelectedToMaterial = intersects[0].object;
+                popMenu = true;
+            }
+           
            
         }
     }
          
+}
+
+function menuState(n){
+    if(n == 1){
+        menuState = true;
+    }else{
+        menuState = false
+    }
+
 }
 
 function onkeydown(event){
@@ -233,7 +264,6 @@ function saveKeyframe(){
 
     let tempRot= new THREE.Quaternion();
     tempRot.copy(lastSelected.quaternion);
-    console.log(tempRot);
 
     var material = new THREE.LineBasicMaterial({
         color: "rgb(255, 00, 00)"
@@ -326,11 +356,14 @@ function saveKeyframe(){
         keyframes.push(frame);
     }
     
-    
+    if(keysOpen){
+        showKeys();
+    }
 }
 
 function preview(){
     pathFollower.preview(pathObjs, pathPoints);
+    pathUpdate = true;
 }
 
 function exportContent(n){
@@ -346,7 +379,7 @@ function exportContent(n){
         let geoText = geoFile.toText(objects);
         let keyText = geoFile.keysToText(pathObjs,pathPoints);
         console.log(keyText);
-        //geoFile.exportToAR(geoText, keyText, "teste");
+        geoFile.exportToAR(geoText, keyText, "teste");
     }
 }
 
@@ -356,7 +389,16 @@ function onModelLoad(event) {
     let objLoader = new THREE.OBJLoader();
   
     let objArr = objLoader.parse(modelData);
+
+    let r = Math.floor(Math.random() * 256); 
+    let g = Math.floor(Math.random() * 256); 
+    let b = Math.floor(Math.random() * 256); 
+
+    let textColor = "rgb(" + r + "," + g + "," + b + ")";
+
+    let matColor = new THREE.Color(textColor);
     
+    var objMat = new THREE.MeshPhongMaterial( { color: matColor  } );
    
     let pos = new THREE.Vector3(0, 0, 0);
   
@@ -368,22 +410,24 @@ function onModelLoad(event) {
 
         let obj = new THREE.Mesh(
           geometry,
-          objArr.children[i].material
+          objMat
         );
         obj.position.copy(pos);
+        obj.castShadow = true;
         scene.add(obj);
-        loadedModels.push(obj);
+        
         objects.push(obj);
       }
     } else {
       let geometry = new THREE.Geometry();
       geometry.fromBufferGeometry( objArr.geometry);
 
-      let obj = new THREE.Mesh(geometry, objArr.material);
+      let obj = new THREE.Mesh(geometry, objMa);
       obj.position.copy(pos);
+      obj.castShadow = true;
       scene.add(obj);
   
-      loadedModels.push(obj);
+      
       objects.push(obj);
     }
 
@@ -457,4 +501,140 @@ function setModelColor(){
         document.getElementById("optBt").style.display = "none";
         popMenu = false;
     };
+}
+
+function deleteSelected(){
+    for(let i = 0; i < objects.length; i++){
+        if(objects[i].id == lastSelected.id){
+           objects.splice(i, 1);
+        }
+    }
+
+    for(let i = 0; i < keyframes.length; i++ ){
+        if(keyframes[i].obj.id == lastSelected.id){
+            keyframes.splice(i, 1);
+            pathObjs.splice(i, 1);
+            pathPoints.splice(i, 1);
+        }
+    }
+
+    control.detach(lastSelected);
+    scene.remove(lastSelected);
+    document.getElementById("optBt").style.display = "none";
+}
+
+function showKeys(){
+    
+    let keyArrIndex;
+    let parent = document.getElementById("line");
+
+    for(let i = 0; i < keyframes.length; i++ ){
+        if(keyframes[i].obj.id == lastSelected.id){
+            keyArrIndex = i;
+        }
+    }
+
+    if(keyArrIndex != null){    
+        keysOpen = true;
+
+        document.getElementById("timeline").style.display = "block";
+        
+
+        let qtnFrames = keyframes[keyArrIndex].position.length;
+        
+        for(let i = 0; i < qtnFrames; i++){
+
+            let leftDistance = i * 100;
+
+            var btn = document.createElement("DIV");
+            let attrIndex = "a" + keyArrIndex + "k" + i;
+
+            var attClass = document.createAttribute("class");
+            attClass.value = "keyframeDot"; 
+            btn.setAttributeNode(attClass); 
+
+            var attId = document.createAttribute("id");
+            attId.value = attrIndex; 
+            btn.setAttributeNode(attId); 
+
+            var attClick = document.createAttribute("onclick");
+            attClick.value = "selectedKey(this)"; 
+            btn.setAttributeNode(attClick); 
+
+            btn.style.left = leftDistance + "px";
+
+            parent.appendChild(btn);
+
+        }
+
+
+    }
+
+    document.getElementById("optBt").style.display = "none";
+}
+
+function selectedKey(el){
+    pathUpdate = false;
+    let element =  document.getElementById("timeline");
+    let rect = element.getBoundingClientRect();
+    document.getElementById("timeline").style.borderBottomRightRadius = 0;
+    document.getElementById("timeline").style.borderTopRightRadius = 0;
+    document.getElementById("keysMenu").style.display = "block";
+    document.getElementById("keysMenu").style.left = rect.right + "px";
+    let kId;
+    let pId;
+    let tempJ;
+
+    for(let i = 0; i < el.id.length; i++){
+        if(el.id[i] == "a"){
+            for(let j = 0; j < el.id.length; j++){
+                if(el.id[j] == "k"){
+                    tempJ = j;
+                }
+            }
+
+            let n;
+
+            for(let j = i+1; j < tempJ; j++){
+                if(n == null){
+                    n = el.id[j];
+                }else{
+                    n += el.id[j];
+                }
+            }
+            
+            i = tempJ-1;
+            kId = n;
+
+        }else if(el.id[i] == "k"){
+           
+            let n;
+
+            for(let j = i+1; j < el.id.length; j++){
+                if(n == null){
+                    n = el.id[j];
+                }else{
+                    n += el.id[j];
+                }
+            }
+            
+            pId = n;
+        }
+    }
+
+    lastKeySelected.x = kId;
+    lastKeySelected.y = pId;
+   
+
+    lastSelected.position.copy(keyframes[kId].position[pId]);
+    lastSelected.quaternion.copy(keyframes[kId].rotation[pId]);
+}
+
+function deleteKey(){
+    if(lastKeySelected != null){
+        
+        keyframes[lastKeySelected.x].position.splice(lastKeySelected.y, 1);
+        keyframes[lastKeySelected.x].rotation.splice(lastKeySelected.y, 1);
+  
+    }
 }
