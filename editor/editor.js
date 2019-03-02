@@ -21,6 +21,7 @@ var overMenu = false;
 var keysOpen = false;
 
 var lastKeySelected = new THREE.Vector2();
+var lastKeySelectedElement;
 
 var pathUpdate = false;
 
@@ -112,8 +113,6 @@ function initEditor(){
     animate();
 }
 
-
-
 function animate() {
     requestAnimationFrame( animate );
     if(pathUpdate){
@@ -122,7 +121,7 @@ function animate() {
     
     
     render();
-};
+}
 
 function render(){
     renderer.render( scene, camera );
@@ -357,6 +356,7 @@ function saveKeyframe(){
     }
     
     if(keysOpen){
+        keysOpen = false;
         showKeys();
     }
 }
@@ -371,15 +371,16 @@ function exportContent(n){
         let tempObj = [];
         for(let i = 0; i < pathObjs.length; i++){
             tempObj[i]= pathObjs[i];
-            tempObj[i].position.copy(pathPoints[i][0]);
+            tempObj[i].position.copy(pathPoints[i].position[0]);
         }
         exportObj = tempObj;
         exportPath = pathPoints;
+        
     }else{
         let geoText = geoFile.toText(objects);
         let keyText = geoFile.keysToText(pathObjs,pathPoints);
-        console.log(keyText);
-        geoFile.exportToAR(geoText, keyText, "teste");
+        geoFile.exportToAR(geoText, keyText, "ModelsAR");
+        console.log(pathPoints);
     }
 }
 
@@ -526,7 +527,7 @@ function deleteSelected(){
 function showKeys(){
     
     let keyArrIndex;
-    let parent = document.getElementById("line");
+    let parent = document.getElementById("elementsWrapper");
 
     for(let i = 0; i < keyframes.length; i++ ){
         if(keyframes[i].obj.id == lastSelected.id){
@@ -534,40 +535,54 @@ function showKeys(){
         }
     }
 
-    if(keyArrIndex != null){    
-        keysOpen = true;
-
-        document.getElementById("timeline").style.display = "block";
+    if(keyArrIndex != null){ 
         
+        if(!keysOpen){
+            keysOpen = true;
 
-        let qtnFrames = keyframes[keyArrIndex].position.length;
-        
-        for(let i = 0; i < qtnFrames; i++){
+            document.getElementById("timeline").style.display = "block";
+            
+            
+            let qtnFrames = keyframes[keyArrIndex].position.length;
+            let childs = parent.childNodes.length;
 
-            let leftDistance = i * 100;
+            let indexFrames;
 
-            var btn = document.createElement("DIV");
-            let attrIndex = "a" + keyArrIndex + "k" + i;
-
-            var attClass = document.createAttribute("class");
-            attClass.value = "keyframeDot"; 
-            btn.setAttributeNode(attClass); 
-
-            var attId = document.createAttribute("id");
-            attId.value = attrIndex; 
-            btn.setAttributeNode(attId); 
-
-            var attClick = document.createAttribute("onclick");
-            attClick.value = "selectedKey(this)"; 
-            btn.setAttributeNode(attClick); 
-
-            btn.style.left = leftDistance + "px";
-
-            parent.appendChild(btn);
-
+            if(childs > 0){
+                indexFrames = childs;
+            }else{
+                indexFrames = 0;
+            }
+           
+            for(let i = indexFrames; i < qtnFrames; i++){
+    
+                let leftDistance = i * 100;
+    
+                var btn = document.createElement("DIV");
+                let attrIndex = "a" + keyArrIndex + "k" + i;
+    
+                var attClass = document.createAttribute("class");
+                attClass.value = "keyframeDot"; 
+                btn.setAttributeNode(attClass); 
+    
+                var attId = document.createAttribute("id");
+                attId.value = attrIndex; 
+                btn.setAttributeNode(attId); 
+    
+                var attClick = document.createAttribute("onclick");
+                attClick.value = "selectedKey(this)"; 
+                btn.setAttributeNode(attClick); 
+    
+                btn.style.left = leftDistance + "px";
+    
+                parent.appendChild(btn);
+    
+            }
+        }else{
+            document.getElementById("timeline").style.display = "none";
+            keysOpen = false;
         }
-
-
+       
     }
 
     document.getElementById("optBt").style.display = "none";
@@ -577,10 +592,12 @@ function selectedKey(el){
     pathUpdate = false;
     let element =  document.getElementById("timeline");
     let rect = element.getBoundingClientRect();
-    document.getElementById("timeline").style.borderBottomRightRadius = 0;
-    document.getElementById("timeline").style.borderTopRightRadius = 0;
+    element.style.borderTopRightRadius = 0;
     document.getElementById("keysMenu").style.display = "block";
     document.getElementById("keysMenu").style.left = rect.right + "px";
+
+    
+
     let kId;
     let pId;
     let tempJ;
@@ -622,19 +639,78 @@ function selectedKey(el){
         }
     }
 
-    lastKeySelected.x = kId;
-    lastKeySelected.y = pId;
+    if(lastKeySelectedElement != null){
+
+        lastKeySelectedElement.style.backgroundColor = "rgb(134,142,150)";
+
+        lastKeySelected.x = kId;
+        lastKeySelected.y = pId;
+
+        lastKeySelectedElement = el;
+
+        lastKeySelectedElement.style.backgroundColor = "rgb(184,192,200)";
+    }else{
+        lastKeySelectedElement = el;
+        lastKeySelectedElement.style.backgroundColor = "rgb(184,192,200)";
+
+        lastKeySelected.x = kId;
+        lastKeySelected.y = pId;
+    }
+    
    
 
     lastSelected.position.copy(keyframes[kId].position[pId]);
     lastSelected.quaternion.copy(keyframes[kId].rotation[pId]);
 }
 
+function resetKey(){
+    for(let i = 0; i < keyframes.length; i++){
+        if(lastSelected.id == keyframes[i].obj.id ){
+            lastSelected.position.copy(keyframes[i].position[keyframes[i].position.length - 1]);
+            lastSelected.quaternion.copy(keyframes[i].rotation[keyframes[i].rotation.length - 1]);
+        }
+    }
+}
+    
 function deleteKey(){
+    
     if(lastKeySelected != null){
-        
+        let parent = document.getElementById("elementsWrapper");
+
+    
         keyframes[lastKeySelected.x].position.splice(lastKeySelected.y, 1);
         keyframes[lastKeySelected.x].rotation.splice(lastKeySelected.y, 1);
-  
+
+       
+        let LastKeyid = "a" + lastKeySelected.x + "k" + lastKeySelected.y;
+
+        for(let i = 0; i < parent.childNodes.length; i++){
+            if(parent.childNodes[i].id == LastKeyid){
+                parent.removeChild(parent.childNodes[i]);
+            }
+        }
+
+        scene.remove(keyframes[lastKeySelected.x].path);
+
+        var material = new THREE.LineBasicMaterial({
+            color: "rgb(255, 00, 00)"
+        });
+
+        var geometry = new THREE.Geometry();
+        
+        geometry.vertices = keyframes[lastKeySelected.x].position;
+
+        var line = new THREE.Line(geometry, material);
+
+        keyframes[lastKeySelected.x].path = line;
+
+        scene.add(keyframes[lastKeySelected.x].path);
+
+        let tempPosArr = keyframes[lastKeySelected.x].position;
+
+        keyframes[lastKeySelected.x].obj.position.copy(tempPosArr[tempPosArr.length - 1]);
+       
+        keysOpen = false;
+        showKeys();
     }
 }

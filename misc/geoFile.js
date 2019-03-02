@@ -259,10 +259,18 @@ class GeoFile{
         let indexJ3 = indexK2 + 1;
         let indexK3;
         for(let k = indexJ3; k < text.length; k++){
-            if(text[k] == ";"){
-                indexK3 = k;
-                break;
+            if(type == "v3"){
+                if(text[k] == ";"){
+                    indexK3 = k;
+                    break;
+                }
+            }else if(type == "v4"){
+                if(text[k] == " "){
+                    indexK3 = k;
+                    break;
+                }
             }
+           
         }
 
         let n3;
@@ -275,7 +283,7 @@ class GeoFile{
             }
         }
 
-        if(type = "v3"){
+        if(type == "v3"){
 
             v = new THREE.Vector3(parseFloat(n1),parseFloat(n2),parseFloat(n3));
 
@@ -300,8 +308,10 @@ class GeoFile{
                     n4 += text[k];
                 }
             }
+            console.log
 
-            v = new THREE.Quaternion(parseFloat(n1),parseFloat(n2),parseFloat(n3), parseFloat(n4));
+            v = new THREE.Quaternion(parseFloat(n1), parseFloat(n2), parseFloat(n3), parseFloat(n4));
+            console.log(v);
 
         }
 
@@ -347,7 +357,7 @@ class GeoFile{
 
     keysToArr(text){
         let keys = [];
-        
+
         for(let i = 0; i < text.length; i++){
             if(text[i] == "k"){
                 let position = [];
@@ -393,7 +403,7 @@ class GeoFile{
                let frames = {
                    id: id,
                    position: position,
-                   rotation: rotation
+                   rotationQuat: rotation
                }
                keys.push(frames);
             }
@@ -426,6 +436,7 @@ class GeoFile{
     importInAR(text){
         let meshesArr = this.toGeo(text);
         let keys = this.keysToArr(text);
+        
         let toAdd = {
             meshesArr: meshesArr,
             keyframes: keys

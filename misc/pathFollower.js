@@ -12,6 +12,7 @@ class PathFollower{
         this.objArr = obj;
         this.pathArr = path;
         //console.log(path[0].rotationQuat);
+        console.log(path)
         for(let i = 0; i < obj.length; i++){
             obj[i].position.copy(path[i].position[0]);
             obj[i].quaternion.copy(path[i].rotationQuat[0]);

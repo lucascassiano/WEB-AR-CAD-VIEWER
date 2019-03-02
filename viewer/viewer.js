@@ -1,7 +1,7 @@
 var scene, camera, renderer, arToolkitSource, geoFile;
 
 var objects = [];
-var keyframes = [];
+var keyframesViewer = [];
 
 var pathFollower = new PathFollower();
 
@@ -162,6 +162,7 @@ function onResize() {
 }
 
 function previewer(){
+  
   pathFollower.preview(exportObj, exportPath);
 }
 
@@ -170,25 +171,22 @@ function onModelLoadViewer(event) {
 
    let toAdd = geoFile.importInAR(text);
 
-   console.log(toAdd);
+  
 
    for(let i = 0; i < toAdd.meshesArr.length; i++){
       objects.push(toAdd.meshesArr[i].mesh);
       for(let j = 0; j < toAdd.keyframes.length; j++){
         if(toAdd.meshesArr[i].id == toAdd.keyframes[j].id ){
-          keyframes.push(toAdd.keyframes[j].vertices);
+          keyframesViewer.push(toAdd.keyframes[j]);
           break;
         }
       }
-      toAdd.meshesArr[i].mesh.position.copy(keyframes[0][0]);
+      toAdd.meshesArr[i].mesh.position.copy(keyframesViewer[0].position[0]);
       scene.add(toAdd.meshesArr[i].mesh);
    }
 
    exportObj = objects;
-   exportPath = keyframes;
-
-   console.log(exportObj);
-   console.log(exportPath);
+   exportPath = keyframesViewer;
 
 }
 
