@@ -65,9 +65,7 @@ function initViewer(){
       // to read from the webcam
       sourceType: "webcam",
 
-      // resolution displayed for the source 
-      displayWidth: window.innerWidth,
-      displayHeight: window.innerHeight,
+      // resolution displayed for the source
 
       // // to read from an image
       // sourceType : 'image',
