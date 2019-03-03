@@ -90,17 +90,48 @@
 
 
 
-        <div id="viewer">
-            <input type="file" id="selectedModelViewer" style="display: none;" onchange="onChooseFile(event, onModelLoadViewer.bind(this))" />
-            <a id="loadBG" onclick="document.getElementById('selectedModelViewer').click();" href="#" > 
-                <img id="imgBtLoad" class="imgBT" src="misc/imgs/load.png"/>
-            </a>
+        <div id="viewer" class="row">
 
-            <button onclick="previewer()">Preview Viewer</button>
+            <div id="toolbarViewerDesktop" class="col">
 
+                <div class="btn-group dropright marginBT row">
+                    <button type="button" class="btn btn-secondary dropdown-toggle btn-lg" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img id="imgBtLoadLG" class="imgBT" src="misc/imgs/load.png"/>
+                    </button>
+                    <div class="dropdown-menu">
+                        <input type="file" id="selectedFile" style="display: none;" onchange="onChooseFile(event, onModelLoadViewer.bind(this))" />
+                        
+                        <a class="dropdown-item btn-lg" onclick="document.getElementById('selectedFile').click();" href="#" > 
+                            Load .arcad File</a>
+                        
+                    </div>
+                </div>
+                
+                
+                <button type="button" class="btn btn-secondary marginBT row" onclick="previewer()"> <img id="imgBtPreviewLG"  class="imgBT" src="misc/imgs/preview.png"></button>
+                
+                
+            </div>
+
+            <div id="toolbarViewerMobile" class="col">
+                <div class="row">
+                    <input type="file" id="selectedFileMobile" style="display: none;" onchange="onChooseFile(event, onModelLoadViewer.bind(this))" />
+                    <button type="button" class="btn btn-secondary  btn-lg" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="document.getElementById('selectedFileMobile').click();">
+                        <img id="imgBtLoadLG" class="imgBT" src="misc/imgs/load.png"/>
+                    </button>
+
+                    <button type="button" class="btn btn-secondary marginBT" onclick="previewer()"> <img id="imgBtPreviewLG"  class="imgBT" src="misc/imgs/preview.png"></button>
+                </div>
+            </div>
         </div>
         
+
+
+
     </div>
+
+
+
 
     <div id="optBt">
         <div class="list-group">

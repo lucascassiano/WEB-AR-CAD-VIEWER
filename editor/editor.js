@@ -513,6 +513,7 @@ function deleteSelected(){
 
     for(let i = 0; i < keyframes.length; i++ ){
         if(keyframes[i].obj.id == lastSelected.id){
+            scene.remove(keyframes[i].path);
             keyframes.splice(i, 1);
             pathObjs.splice(i, 1);
             pathPoints.splice(i, 1);

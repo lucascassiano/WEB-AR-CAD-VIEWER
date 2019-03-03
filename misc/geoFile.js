@@ -192,7 +192,7 @@ class GeoFile{
                 geometry.computeVertexNormals();
             }
             
-            let material = new THREE.MeshBasicMaterial({color: colors[i]});
+            let material = new THREE.MeshPhongMaterial({color: colors[i]});
 
             let mesh = new THREE.Mesh(geometry, material);
             mesh.name = names[i];

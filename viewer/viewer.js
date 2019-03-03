@@ -46,6 +46,8 @@ function initViewer(){
     });
     renderer.setClearColor(new THREE.Color("lightgrey"), 0);
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     var renderDiv = document.getElementById('renderDiv');
 
     if(renderDiv.hasChildNodes()){
@@ -60,7 +62,11 @@ function initViewer(){
     ////////////////////////////////////////////////////////////////////////////////
     arToolkitSource = new THREEx.ArToolkitSource({
       // to read from the webcam
-      sourceType: "webcam"
+      sourceType: "webcam",
+
+      // resolution displayed for the source 
+      displayWidth: window.innerWidth,
+      displayHeight: window.innerHeight,
 
       // // to read from an image
       // sourceType : 'image',
@@ -87,14 +93,19 @@ function initViewer(){
       cameraParametersUrl: "viewer/data/camera/camera_para.dat",
       detectionMode: "mono"
     });
+    console.log(arToolkitSource)
+    // arToolkitSource.dom
+    // document.getElementById("renderDiv").appendChild(arToolkitSource.domElement);
     // initialize it
     arToolkitContext.init(function onCompleted() {
       // copy projection matrix to camera
       camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix());
+      
     });
     // update artoolkit on every frame
     onRenderFcts.push(function() {
       if (arToolkitSource.ready === false) return;
+
       arToolkitContext.update(arToolkitSource.domElement);
 
       // update scene.visible if the marker is seen
@@ -174,6 +185,7 @@ function onModelLoadViewer(event) {
   
 
    for(let i = 0; i < toAdd.meshesArr.length; i++){
+      toAdd.meshesArr[i].mesh.castShadow = true;
       objects.push(toAdd.meshesArr[i].mesh);
       for(let j = 0; j < toAdd.keyframes.length; j++){
         if(toAdd.meshesArr[i].id == toAdd.keyframes[j].id ){
