@@ -57,6 +57,9 @@ function initViewer(){
       renderDiv.appendChild( renderer.domElement );
     }
 
+    renderDiv.style.width = window.innerWidth;
+    renderDiv.style.height = window.innerHeight;
+
     ////////////////////////////////////////////////////////////////////////////////
     //          handle arToolkitSource
     ////////////////////////////////////////////////////////////////////////////////
@@ -93,11 +96,20 @@ function initViewer(){
       cameraParametersUrl: "viewer/data/camera/camera_para.dat",
       detectionMode: "mono"
     });
-    console.log(arToolkitSource)
+    
     // arToolkitSource.dom
-    // document.getElementById("renderDiv").appendChild(arToolkitSource.domElement);
+    // document.getElementById("renderDiv").appendChild();
     // initialize it
     arToolkitContext.init(function onCompleted() {
+      document.body.style.overflow = "hidden";
+      
+
+      document.body.removeChild(document.body.lastChild);
+      
+      console.log(document.body)
+
+      document.getElementById("renderDiv").appendChild(arToolkitSource.domElement);
+
       // copy projection matrix to camera
       camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix());
       
@@ -165,10 +177,10 @@ function initViewer(){
 }
 
 function onResize() {
-  arToolkitSource.onResize();
-  arToolkitSource.copySizeTo(renderer.domElement);
+  arToolkitSource.onResizeElement();
+  arToolkitSource.copyElementSizeTo(renderer.domElement);
   if (arToolkitContext.arController !== null) {
-    arToolkitSource.copySizeTo(arToolkitContext.arController.canvas);
+    arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas);
   }
 }
 
