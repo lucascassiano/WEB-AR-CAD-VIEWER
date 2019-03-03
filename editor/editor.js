@@ -415,6 +415,7 @@ function onModelLoad(event) {
         );
         obj.position.copy(pos);
         obj.castShadow = true;
+        obj.position.set(0,1,0);
         scene.add(obj);
         
         objects.push(obj);
@@ -426,6 +427,7 @@ function onModelLoad(event) {
       let obj = new THREE.Mesh(geometry, objMa);
       obj.position.copy(pos);
       obj.castShadow = true;
+      obj.position.set(0,1,0);
       scene.add(obj);
   
       
@@ -480,6 +482,8 @@ function transforms(n){
         control.setMode( "translate" );
     }else if(n == 2){
         control.setMode( "rotate" );
+    }else if(n == 3){
+        control.setMode( "scale" );
     }
 }
 

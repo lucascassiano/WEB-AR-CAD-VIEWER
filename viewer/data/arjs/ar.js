@@ -63637,8 +63637,12 @@ ARjs.Source.prototype._initSourceWebcam = function (onReady, onError) {
 	domElement.setAttribute('autoplay', '');
 	domElement.setAttribute('muted', '');
 	domElement.setAttribute('playsinline', '');
-	domElement.style.width = this.parameters.displayWidth + 'px'
-	domElement.style.height = this.parameters.displayHeight + 'px'
+	domElement.style.width = String(this.parameters.displayWidth) + 'px'
+	domElement.style.height = String(this.parameters.displayHeight) + 'px'
+
+	var attId = document.createAttribute("id");
+	attId.value = "webCamRender"; 
+	domElement.setAttributeNode(attId);
 
 	// check API is available
 	if (navigator.mediaDevices === undefined ||
@@ -63662,12 +63666,12 @@ ARjs.Source.prototype._initSourceWebcam = function (onReady, onError) {
 			video: {
 				facingMode: 'environment',
 				width: {
-					ideal: _this.parameters.sourceWidth,
+					ideal: _this.parameters.displayWidth,
 					// min: 1024,
 					// max: 1920
 				},
 				height: {
-					ideal: _this.parameters.sourceHeight,
+					ideal: _this.parameters.displayHeight,
 					// min: 776,
 					// max: 1080
 				}
