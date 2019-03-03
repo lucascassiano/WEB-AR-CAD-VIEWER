@@ -63551,11 +63551,10 @@ ARjs.Source.prototype.init = function (onReady, onError) {
 	return this
 
 	function onSourceReady() {
-		document.body.appendChild(_this.domElement);
 
 		_this.ready = true
 
-		onReady && onReady()
+		onReady && onReady(_this.domElement)
 	}
 }
 

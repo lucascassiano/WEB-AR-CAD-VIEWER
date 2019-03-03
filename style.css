@@ -184,6 +184,10 @@ body{
 }
 
 @media only screen and (max-width: 600px) {
+   
+    html{
+        overflow: hidden !important;
+    }
     
     #toolbarViewerDesktop{
         display: none;

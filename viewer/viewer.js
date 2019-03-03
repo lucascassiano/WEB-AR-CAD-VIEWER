@@ -57,8 +57,6 @@ function initViewer(){
       renderDiv.appendChild( renderer.domElement );
     }
 
-    renderDiv.style.width = window.innerWidth;
-    renderDiv.style.height = window.innerHeight;
 
     ////////////////////////////////////////////////////////////////////////////////
     //          handle arToolkitSource
@@ -78,7 +76,8 @@ function initViewer(){
       // sourceType : 'video',
       // sourceUrl : THREEx.ArToolkitContext.baseURL + '../data/videos/headtracking.mp4',
     });
-    arToolkitSource.init(function onReady() {
+    arToolkitSource.init(function onReady(el) {
+      document.getElementById("renderDiv").appendChild(el);
       onResize();
     });
     
@@ -101,15 +100,6 @@ function initViewer(){
     // document.getElementById("renderDiv").appendChild();
     // initialize it
     arToolkitContext.init(function onCompleted() {
-      document.body.style.overflow = "hidden";
-      
-
-      document.body.removeChild(document.body.lastChild);
-      
-      console.log(document.body)
-
-      document.getElementById("renderDiv").appendChild(arToolkitSource.domElement);
-
       // copy projection matrix to camera
       camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix());
       
