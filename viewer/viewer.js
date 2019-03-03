@@ -74,8 +74,8 @@ function initViewer(){
       // sourceType : 'video',
       // sourceUrl : THREEx.ArToolkitContext.baseURL + '../data/videos/headtracking.mp4',
     });
-    arToolkitSource.init(function onReady(el) {
-      document.getElementById("renderDiv").appendChild(el);
+    arToolkitSource.init(function onReady() {
+     
       onResize();
     });
     
