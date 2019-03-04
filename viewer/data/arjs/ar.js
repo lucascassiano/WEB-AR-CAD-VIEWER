@@ -5864,7 +5864,7 @@ ARjs.Source.prototype.init = function(onReady, onError){
 
 		_this.ready = true
 
-		onReady && onReady()
+		onReady && onReady(_this.domElement)
         }
 } 
 

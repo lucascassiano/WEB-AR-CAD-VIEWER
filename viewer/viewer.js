@@ -48,14 +48,15 @@ function initViewer(){
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    var renderDiv = document.getElementById('renderDiv');
+    document.body.appendChild(renderer.domElement);
+    // var renderDiv = document.getElementById('renderDiv');
 
-    if(renderDiv.hasChildNodes()){
-      renderDiv.removeChild(renderDiv.childNodes[0]);
-      renderDiv.appendChild( renderer.domElement );
-    }else{
-      renderDiv.appendChild( renderer.domElement );
-    }
+    // if(renderDiv.hasChildNodes()){
+    //   renderDiv.removeChild(renderDiv.childNodes[0]);
+    //   renderDiv.appendChild( renderer.domElement );
+    // }else{
+    //   renderDiv.appendChild( renderer.domElement );
+    // }
 
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -74,15 +75,15 @@ function initViewer(){
       // sourceType : 'video',
       // sourceUrl : THREEx.ArToolkitContext.baseURL + '../data/videos/headtracking.mp4',
     });
-    arToolkitSource.init(function onReady() {
-     
-      onResize();
-    });
+    arToolkitSource.init(function onReady(el){
+      // document.getElementById("renderDiv").appendChild(el);
+      onResize()
+    })
     
     // handle resize
-    window.addEventListener("resize", function() {
-      onResize();
-    });
+    window.addEventListener('resize', function(){
+      onResize()
+    })
 
     ////////////////////////////////////////////////////////////////////////////////
     //          initialize arToolkitContext
@@ -164,12 +165,13 @@ function initViewer(){
   });
 }
 
-function onResize() {
-  arToolkitSource.onResizeElement();
-  arToolkitSource.copyElementSizeTo(renderer.domElement);
-  if (arToolkitContext.arController !== null) {
-    arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas);
-  }
+
+function onResize(){
+  arToolkitSource.onResize()	
+  arToolkitSource.copySizeTo(renderer.domElement)	
+  if( arToolkitContext.arController !== null ){
+    arToolkitSource.copySizeTo(arToolkitContext.arController.canvas)	
+  }	
 }
 
 function previewer(){

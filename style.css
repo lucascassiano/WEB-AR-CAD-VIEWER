@@ -184,12 +184,24 @@ body{
 }
 
 @media only screen and (max-width: 600px) {
-   
-    /* #renderDiv{
+    /* canvas{
+        width: 100% !important;
+        height: 100% !important;
+        position: absolute;
+        margin-left: 0 !important;
+    }
+   video{
+       width: 100% !important;
+       height: 100% !important;
+       position: absolute !important;
+       top: -30% !important;
+       margin-left: 0 !important;
+   }
+     #renderDiv{
         width: 100vw;
         height: 100vh;
-    }
-   
+    } */
+   /*
     canvas{
         width: 100% !important; 
         height: 100% !important;
