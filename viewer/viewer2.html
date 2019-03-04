@@ -4,9 +4,13 @@
 <link type="text/css" rel="stylesheet" href="../misc/bootstrap.css"/>
 <link type="text/css" rel="stylesheet" href="../style.css"/>
 <!-- three.js library -->
+
+<script type="text/javascript" src="../misc/jquery.js"></script>
+<script type="text/javascript" src="../misc/popper.js"></script>
 <script type="text/javascript" src="../misc/three.js"></script>
 <script type="text/javascript" src="./data/arjs/ar.js"></script>
-<script>THREEx.ArToolkitContext.baseURL = '../'</script>
+<script type="text/javascript" src="../misc/pathFollower.js"></script>
+<script type="text/javascript" src="../misc/geoFile.js"></script>
 
 <body style='margin : 0px; overflow: hidden; font-family: Monospace;'>
     
@@ -14,18 +18,10 @@
 
                 <div id="toolbarViewerDesktop" class="col">
     
-                    <div class="btn-group dropright marginBT row">
-                        <button type="button" class="btn btn-secondary dropdown-toggle btn-lg" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img id="imgBtLoadLG" class="imgBT" src="../misc/imgs/load.png"/>
-                        </button>
-                        <div class="dropdown-menu">
-                            <input type="file" id="selectedFile" style="display: none;" onchange="onChooseFile(event, onModelLoadViewer.bind(this))" />
-                            
-                            <a class="dropdown-item btn-lg" onclick="document.getElementById('selectedFile').click();" href="#" > 
-                                Load .arcad File</a>
-                            
-                        </div>
-                    </div>
+                    <input type="file" id="selectedFileMobile" style="display: none;" onchange="onChooseFile(event, onModelLoadViewer.bind(this))" />
+                    <button type="button" class="btn btn-secondary  btn-lg" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="document.getElementById('selectedFileMobile').click();">
+                        <img id="imgBtLoadLG" class="imgBT" src="../misc/imgs/load.png"/>
+                    </button>
                     
                     
                     <button type="button" class="btn btn-secondary marginBT row" onclick="previewer()"> <img id="imgBtPreviewLG"  class="imgBT" src="../misc/imgs/preview.png"></button>
@@ -51,6 +47,12 @@
 	//////////////////////////////////////////////////////////////////////////////////
     document.getElementById("viewer").style.display = "block";
 
+    var objects = [];
+    var keyframesViewer = [];
+
+    var pathFollower = new PathFollower();
+
+    var geoFile = new GeoFile();
 	// init renderer
 	var renderer	= new THREE.WebGLRenderer({
 		// antialias	: true,
@@ -61,7 +63,9 @@
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	renderer.domElement.style.position = 'absolute'
 	renderer.domElement.style.top = '0px'
-	renderer.domElement.style.left = '0px'
+    renderer.domElement.style.left = '0px'
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 	document.body.appendChild( renderer.domElement );
 
 	// array of functions for the rendering loop
@@ -187,12 +191,21 @@
 		mesh.rotation.x += 0.1
 	})
 
+    // if(exportObj != null && exportPath != null){
+    //   for(let i = 0; i < exportObj.length; i++){
+    //     scene.add(exportObj[i]);
+    //   }
+    //   console.log("content imported!");
+    // }else{
+    //   console.log("content not imported!!!");
+    // }
 	//////////////////////////////////////////////////////////////////////////////////
 	//		render the whole thing on the page
 	//////////////////////////////////////////////////////////////////////////////////
 
 	// render the scene
 	onRenderFcts.push(function(){
+        pathFollower.update();
 		renderer.render( scene, camera );
 		
 	})
@@ -210,5 +223,52 @@
 		onRenderFcts.forEach(function(onRenderFct){
 			onRenderFct(deltaMsec/1000, nowMsec/1000)
 		})
-	})
-</script></body>
+    })
+
+    function previewer(){
+  
+        pathFollower.preview(exportObj, exportPath);
+    }
+    
+    function onModelLoadViewer(event) {
+        let text = event.target.result;
+
+        let toAdd = geoFile.importInAR(text);
+
+        
+
+        for(let i = 0; i < toAdd.meshesArr.length; i++){
+            toAdd.meshesArr[i].mesh.castShadow = true;
+            objects.push(toAdd.meshesArr[i].mesh);
+            for(let j = 0; j < toAdd.keyframes.length; j++){
+                if(toAdd.meshesArr[i].id == toAdd.keyframes[j].id ){
+                keyframesViewer.push(toAdd.keyframes[j]);
+                break;
+                }
+            }
+            toAdd.meshesArr[i].mesh.position.copy(keyframesViewer[0].position[0]);
+            scene.add(toAdd.meshesArr[i].mesh);
+        }
+
+        exportObj = objects;
+        exportPath = keyframesViewer;
+
+    }
+
+        function onChooseFile(event, onLoadFileHandler) {
+        if (typeof window.FileReader !== "function")
+            throw "The file API isn't supported on this browser.";
+        let input = event.target;
+        if (!input) throw "The browser does not properly implement the event object";
+        if (!input.files)
+            throw "This browser does not support the `files` property of the file input.";
+        if (!input.files[0]) return undefined;
+        let file = input.files[0];
+        let fr = new FileReader();
+        fr.onload = onLoadFileHandler;
+        fr.readAsText(file);
+    }
+</script>
+
+
+</body>

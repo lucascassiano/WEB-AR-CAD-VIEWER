@@ -177,6 +177,7 @@ body{
     border-style: solid;
     border-top-right-radius: 40px;
     border-bottom-right-radius: 40px;
+    z-index: 3;
 }
 
 #toolbarViewerMobile{
