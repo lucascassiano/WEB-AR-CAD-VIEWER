@@ -2,11 +2,12 @@
 <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 <title>Viewer</title>
 <link type="text/css" rel="stylesheet" href="../misc/bootstrap.css"/>
-<link type="text/css" rel="stylesheet" href="../style.css"/>
+<link type="text/css" rel="stylesheet" href="viewerStyle.css"/>
 <!-- three.js library -->
 
 <script type="text/javascript" src="../misc/jquery.js"></script>
 <script type="text/javascript" src="../misc/popper.js"></script>
+<script type="text/javascript" src="../misc/bootstrap.js"></script>
 <script type="text/javascript" src="../misc/three.js"></script>
 <script type="text/javascript" src="./data/arjs/ar.js"></script>
 <script type="text/javascript" src="../misc/pathFollower.js"></script>
@@ -20,14 +21,14 @@
         <div id="toolbarViewerDesktop" class="col">
 
             <input type="file" id="selectedFileMobile" style="display: none;" onchange="onChooseFile(event, onModelLoadViewer.bind(this))" />
-            <button type="button" class="btn btn-secondary  btn-lg"  onclick="document.getElementById('selectedFileMobile').click();">
+            <button type="button" class="btn btn-secondary  btn-lg marginBT row"  onclick="document.getElementById('selectedFileMobile').click();">
                 <img id="imgBtLoadLG" class="imgBT" src="../misc/imgs/load.png"/>
             </button>
             
             
             <button type="button" class="btn btn-secondary marginBT row" onclick="previewer()"> <img id="imgBtPreviewLG"  class="imgBT" src="../misc/imgs/preview.png"></button>
             
-            <button type="button" class="btn btn-secondary marginBT row" onclick="goToEditor()"> <img id="imgBtPreviewLG"  class="imgBT" src="../misc/imgs/preview.png"></button>
+            <button type="button" class="btn btn-secondary marginBT row" onclick="goToEditor()"> <img id="imgBtPreviewLG"  class="imgBT" src="../misc/imgs/3d.png"></button>
         </div>
 
         <div id="toolbarViewerMobile" class="col">
@@ -37,7 +38,7 @@
                     <img id="imgBtLoadLG" class="imgBT" src="../misc/imgs/load.png"/>
                 </button>
 
-                <button type="button" class="btn btn-secondary marginBT" onclick="previewer()"> <img id="imgBtPreviewLG"  class="imgBT" src="../misc/imgs/preview.png"></button>
+                <button type="button" class="btn btn-secondary " onclick="previewer()"> <img id="imgBtPreviewLG"  class="imgBT" src="../misc/imgs/preview.png"></button>
             </div>
         </div>
     </div>
