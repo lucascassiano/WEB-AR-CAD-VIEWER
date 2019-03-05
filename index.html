@@ -32,13 +32,13 @@
 
         <div id="editor" class="row">
 
-            <div id="lightBt" class="row" onclick="changeStyleColor()"></div>
+            <div id="lightBt" class="row" onclick="changeStyleColor()" data-toggle="tooltip" data-placement="bottom" title="On/Off"></div>
 
             <div id="toolbar" class="col">
 
                
 
-                <div class="btn-group dropright marginBT row">
+                <div class="btn-group dropright marginBT row" data-toggle="tooltip" data-placement="right" title="Controls">
                     <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <img id="imgBtLoad" class="imgBT" src="misc/imgs/move.png"/>
                     </button>
@@ -56,10 +56,10 @@
                     </div>
                 </div>
 
-                <button type="button" class="btn marginBT row" onclick="saveKeyframe()" data-toggle="tooltip" data-placement="right" title="Preview"><img id="imgBtPreview"  class="imgBT" src="misc/imgs/keyframe.png"></button>
-                <button type="button" class="btn marginBT row" onclick="preview()"> <img id="imgBtPreview"  class="imgBT" src="misc/imgs/preview.png"></button>
+                <button type="button" class="btn marginBT row" onclick="saveKeyframe()" data-toggle="tooltip" data-placement="right" title="Keyframe"><img id="imgBtPreview"  class="imgBT" src="misc/imgs/keyframe.png"></button>
+                <button type="button" class="btn marginBT row" onclick="preview()" data-toggle="tooltip" data-placement="right" title="Preview"> <img id="imgBtPreview"  class="imgBT" src="misc/imgs/preview.png"></button>
 
-                <div class="btn-group dropright marginBT row">
+                <div class="btn-group dropright marginBT row" data-toggle="tooltip" data-placement="right" title="Export">
                     <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <img id="imgBtLoad" class="imgBT" src="misc/imgs/export.png"/>
                     </button>
@@ -71,7 +71,7 @@
                     </div>
                 </div>
 
-                <div class="btn-group dropright marginBT row">
+                <div class="btn-group dropright marginBT row" data-toggle="tooltip" data-placement="right" title="Load">
                         <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <img id="imgBtLoad" class="imgBT" src="misc/imgs/load.png"/>
                         </button>
@@ -81,15 +81,14 @@
                             <a class="dropdown-item" onclick="document.getElementById('selectedModel').click();" href="#" > 
                                 Load 3D Model</a>
 
-                           
-                        
                             <a class="dropdown-item" onclick="document.getElementById('selectedModelFile').click();" href="#" > 
                                 Load .arcad File</a>
                            
                         </div>
-                </div>
+                </div>  
 
-                <button type="button" class="btn viewerBT row" onclick="initViewer()"> 
+                
+                <button type="button" class="btn viewerBT row" onclick="goToViewer()" data-toggle="tooltip" data-placement="right" title="Viewer"> 
                     <img id="imgBtPreview"  class="imgBT" src="misc/imgs/smartphone.png">
                 </button>
         
@@ -172,7 +171,7 @@
     <div id="renderDiv"></div>
 
 
-
+    
     <script type="text/javascript" src="misc/jquery.js"></script>
     <script type="text/javascript" src="misc/popper.js"></script>
     <script type="text/javascript" src="misc/bootstrap.js"></script>
@@ -186,7 +185,11 @@
     <script type="text/javascript" src="misc/vanilla-picker.js"></script>
     <script type="text/javascript" src="editor/editor.js"></script>
 
-  
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
     <script type="text/javascript" src="./viewer/data/arjs/ar.js"></script>
     <!-- <script type="text/javascript" src="./viewer/viewer.js"></script> -->
     <!-- <script type="text/javascript" src="./viewer/teste.js"></script> -->

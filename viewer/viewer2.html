@@ -11,262 +11,38 @@
 <script type="text/javascript" src="./data/arjs/ar.js"></script>
 <script type="text/javascript" src="../misc/pathFollower.js"></script>
 <script type="text/javascript" src="../misc/geoFile.js"></script>
+<script type="text/javascript" src="viewer2.js"></script>
 
-<body style='margin : 0px; overflow: hidden; font-family: Monospace;'>
+<body style='margin : 0px; overflow: hidden; font-family: Monospace;' >
     
-        <div id="viewer" class="row">
+    <div id="viewer" class="row">
 
-                <div id="toolbarViewerDesktop" class="col">
-    
-                    <input type="file" id="selectedFileMobile" style="display: none;" onchange="onChooseFile(event, onModelLoadViewer.bind(this))" />
-                    <button type="button" class="btn btn-secondary  btn-lg" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="document.getElementById('selectedFileMobile').click();">
-                        <img id="imgBtLoadLG" class="imgBT" src="../misc/imgs/load.png"/>
-                    </button>
-                    
-                    
-                    <button type="button" class="btn btn-secondary marginBT row" onclick="previewer()"> <img id="imgBtPreviewLG"  class="imgBT" src="../misc/imgs/preview.png"></button>
-                    
-                    
-                </div>
-    
-                <div id="toolbarViewerMobile" class="col">
-                    <div class="row">
-                        <input type="file" id="selectedFileMobile" style="display: none;" onchange="onChooseFile(event, onModelLoadViewer.bind(this))" />
-                        <button type="button" class="btn btn-secondary  btn-lg" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="document.getElementById('selectedFileMobile').click();">
-                            <img id="imgBtLoadLG" class="imgBT" src="../misc/imgs/load.png"/>
-                        </button>
-    
-                        <button type="button" class="btn btn-secondary marginBT" onclick="previewer()"> <img id="imgBtPreviewLG"  class="imgBT" src="../misc/imgs/preview.png"></button>
-                    </div>
-                </div>
+        <div id="toolbarViewerDesktop" class="col">
+
+            <input type="file" id="selectedFileMobile" style="display: none;" onchange="onChooseFile(event, onModelLoadViewer.bind(this))" />
+            <button type="button" class="btn btn-secondary  btn-lg"  onclick="document.getElementById('selectedFileMobile').click();">
+                <img id="imgBtLoadLG" class="imgBT" src="../misc/imgs/load.png"/>
+            </button>
+            
+            
+            <button type="button" class="btn btn-secondary marginBT row" onclick="previewer()"> <img id="imgBtPreviewLG"  class="imgBT" src="../misc/imgs/preview.png"></button>
+            
+            <button type="button" class="btn btn-secondary marginBT row" onclick="goToEditor()"> <img id="imgBtPreviewLG"  class="imgBT" src="../misc/imgs/preview.png"></button>
+        </div>
+
+        <div id="toolbarViewerMobile" class="col">
+            <div class="row">
+                <input type="file" id="selectedFileMobile" style="display: none;" onchange="onChooseFile(event, onModelLoadViewer.bind(this))" />
+                <button type="button" class="btn btn-secondary  btn-lg" onclick="document.getElementById('selectedFileMobile').click();">
+                    <img id="imgBtLoadLG" class="imgBT" src="../misc/imgs/load.png"/>
+                </button>
+
+                <button type="button" class="btn btn-secondary marginBT" onclick="previewer()"> <img id="imgBtPreviewLG"  class="imgBT" src="../misc/imgs/preview.png"></button>
             </div>
+        </div>
+    </div>
     
-    <script>
-	//////////////////////////////////////////////////////////////////////////////////
-	//		Init
-	//////////////////////////////////////////////////////////////////////////////////
-    document.getElementById("viewer").style.display = "block";
-
-    var objects = [];
-    var keyframesViewer = [];
-
-    var pathFollower = new PathFollower();
-
-    var geoFile = new GeoFile();
-	// init renderer
-	var renderer	= new THREE.WebGLRenderer({
-		// antialias	: true,
-		alpha: true
-	});
-	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
-	// renderer.setPixelRatio( 1/2 );
-	renderer.setSize( window.innerWidth, window.innerHeight );
-	renderer.domElement.style.position = 'absolute'
-	renderer.domElement.style.top = '0px'
-    renderer.domElement.style.left = '0px'
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-	document.body.appendChild( renderer.domElement );
-
-	// array of functions for the rendering loop
-	var onRenderFcts= [];
-
-	// init scene and camera
-	var scene	= new THREE.Scene();
-	
-	//////////////////////////////////////////////////////////////////////////////////
-	//		Initialize a basic camera
-	//////////////////////////////////////////////////////////////////////////////////
-
-	// Create a camera
-	var camera = new THREE.Camera();
-	scene.add(camera);
-
-	////////////////////////////////////////////////////////////////////////////////
-	//          handle arToolkitSource
-	////////////////////////////////////////////////////////////////////////////////
-
-	var arToolkitSource = new THREEx.ArToolkitSource({
-		// to read from the webcam 
-		sourceType : 'webcam',
-
-		// to read from an image
-		// sourceType : 'image',
-		// sourceUrl : THREEx.ArToolkitContext.baseURL + '../data/images/img.jpg',		
-
-		// to read from a video
-		// sourceType : 'video',
-		// sourceUrl : THREEx.ArToolkitContext.baseURL + '../data/videos/headtracking.mp4',		
-	})
-
-	arToolkitSource.init(function onReady(){
-		onResize()
-	})
-	
-	// handle resize
-	window.addEventListener('resize', function(){
-		onResize()
-	})
-	function onResize(){
-		arToolkitSource.onResize()	
-		arToolkitSource.copySizeTo(renderer.domElement)	
-		if( arToolkitContext.arController !== null ){
-			arToolkitSource.copySizeTo(arToolkitContext.arController.canvas)	
-		}	
-	}
-	////////////////////////////////////////////////////////////////////////////////
-	//          initialize arToolkitContext
-	////////////////////////////////////////////////////////////////////////////////
-	
-
-	// create atToolkitContext
-	var arToolkitContext = new THREEx.ArToolkitContext({
-		cameraParametersUrl: './data/camera/camera_para.dat',
-		detectionMode: 'mono',
-		maxDetectionRate: 30,
-		canvasWidth: 80*3,
-		canvasHeight: 60*3,
-	})
-	// initialize it
-	arToolkitContext.init(function onCompleted(){
-		// copy projection matrix to camera
-		camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
-	})
-
-	// update artoolkit on every frame
-	onRenderFcts.push(function(){
-		if( arToolkitSource.ready === false )	return
-
-		arToolkitContext.update( arToolkitSource.domElement )
-	})
-	
-	
-	////////////////////////////////////////////////////////////////////////////////
-	//          Create a ArMarkerControls
-	////////////////////////////////////////////////////////////////////////////////
-	
-	var markerRoot = new THREE.Group
-	scene.add(markerRoot)
-	var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
-		type : 'pattern',
-		patternUrl :'./data/markers/patt.hiro'
-		// patternUrl : THREEx.ArToolkitContext.baseURL + '../data/data/patt.kanji'
-	})
-
-	// build a smoothedControls
-	var smoothedRoot = new THREE.Group()
-	scene.add(smoothedRoot)
-	var smoothedControls = new THREEx.ArSmoothedControls(smoothedRoot, {
-		lerpPosition: 0.4,
-		lerpQuaternion: 0.3,
-		lerpScale: 1,
-	})
-	onRenderFcts.push(function(delta){
-		smoothedControls.update(markerRoot)
-	})
-	//////////////////////////////////////////////////////////////////////////////////
-	//		add an object in the scene
-	//////////////////////////////////////////////////////////////////////////////////
-
-	var arWorldRoot = smoothedRoot
-
-	// // add a torus knot	
-	// var geometry	= new THREE.CubeGeometry(1,1,1);
-	// var material	= new THREE.MeshNormalMaterial({
-	// 	transparent : true,
-	// 	opacity: 0.5,
-	// 	side: THREE.DoubleSide
-	// }); 
-	// var mesh	= new THREE.Mesh( geometry, material );
-	// mesh.position.y	= geometry.parameters.height/2
-	// arWorldRoot.add( mesh );
-	
-	// var geometry	= new THREE.TorusKnotGeometry(0.3,0.1,64,16);
-	// var material	= new THREE.MeshNormalMaterial(); 
-	// var mesh	= new THREE.Mesh( geometry, material );
-	// mesh.position.y	= 0.5
-	// arWorldRoot.add( mesh );
-	
-	// onRenderFcts.push(function(){
-	// 	mesh.rotation.x += 0.1
-	// })
-
-    // if(exportObj != null && exportPath != null){
-    //   for(let i = 0; i < exportObj.length; i++){
-    //     scene.add(exportObj[i]);
-    //   }
-    //   console.log("content imported!");
-    // }else{
-    //   console.log("content not imported!!!");
-    // }
-	//////////////////////////////////////////////////////////////////////////////////
-	//		render the whole thing on the page
-	//////////////////////////////////////////////////////////////////////////////////
-
-	// render the scene
-	onRenderFcts.push(function(){
-        pathFollower.update();
-		renderer.render( scene, camera );
-		
-	})
-
-	// run the rendering loop
-	var lastTimeMsec= null
-	requestAnimationFrame(function animate(nowMsec){
-		// keep looping
-		requestAnimationFrame( animate );
-		// measure time
-		lastTimeMsec	= lastTimeMsec || nowMsec-1000/60
-		var deltaMsec	= Math.min(200, nowMsec - lastTimeMsec)
-		lastTimeMsec	= nowMsec
-		// call each update function
-		onRenderFcts.forEach(function(onRenderFct){
-			onRenderFct(deltaMsec/1000, nowMsec/1000)
-		})
-    })
-
-    function previewer(){
   
-        pathFollower.preview(exportObj, exportPath);
-    }
     
-    function onModelLoadViewer(event) {
-        let text = event.target.result;
-
-        let toAdd = geoFile.importInAR(text);
-
-        for(let i = 0; i < toAdd.meshesArr.length; i++){
-            toAdd.meshesArr[i].mesh.castShadow = true;
-            objects.push(toAdd.meshesArr[i].mesh);
-            for(let j = 0; j < toAdd.keyframes.length; j++){
-                if(toAdd.meshesArr[i].id == toAdd.keyframes[j].id ){
-                keyframesViewer.push(toAdd.keyframes[j]);
-                break;
-                }
-            }
-            toAdd.meshesArr[i].mesh.position.copy(keyframesViewer[i].position[0]);
-            arWorldRoot.add(toAdd.meshesArr[i].mesh);
-        }
-
-        exportObj = objects;
-        exportPath = keyframesViewer;
-
-    }
-
-        function onChooseFile(event, onLoadFileHandler) {
-        if (typeof window.FileReader !== "function")
-            throw "The file API isn't supported on this browser.";
-        let input = event.target;
-        if (!input) throw "The browser does not properly implement the event object";
-        if (!input.files)
-            throw "This browser does not support the `files` property of the file input.";
-        if (!input.files[0]) return undefined;
-        let file = input.files[0];
-        let fr = new FileReader();
-        fr.onload = onLoadFileHandler;
-        fr.readAsText(file);
-    }
-</script>
-
 
 </body>

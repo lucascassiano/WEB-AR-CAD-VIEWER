@@ -11,8 +11,6 @@ class PathFollower{
     preview(obj, path){
         this.objArr = obj;
         this.pathArr = path;
-        //console.log(path[0].rotationQuat);
-        console.log(path)
         for(let i = 0; i < obj.length; i++){
             obj[i].position.copy(path[i].position[0]);
             obj[i].quaternion.copy(path[i].rotationQuat[0]);
@@ -52,10 +50,17 @@ class PathFollower{
                     if(currentPos.equals(nextPos)){
                         this.previewState[i] =  this.previewState[i] + 1;
                         this.t = 0;
-                        
                     }
-                }   
+
+                   
+                }else{
+                    
+                    this.previewEnable = false;
+                    break;
+                }
             }
+
+           
         }
     }
     ease(t) { return t<0.5 ? 2*t*t : -1+(4-2*t)*t}

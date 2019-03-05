@@ -86,29 +86,9 @@ function initEditor(){
     } );
     scene.add(control);
 
-   
-
     gridHelper = new THREE.GridHelper( size, divisions );
     gridHelper.recieveShadows = true;
     scene.add( gridHelper );
-
-    
-
-    console.log(gridHelper)
-
-    // var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-    // var material = new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true } );
-    // var cube = new THREE.Mesh( geometry, material );
-    // scene.add( cube );
-    // objects.push(cube);
-
-    // var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-    // var material = new THREE.MeshBasicMaterial( { color: 0x67f5ff, transparent: true } );
-    // var cube = new THREE.Mesh( geometry, material );
-    // cube.position.set(1,0,1);
-    // scene.add( cube );
-    // objects.push(cube);
-    // console.log(cube);
 
     camera.position.z = 5;
 
@@ -118,14 +98,16 @@ function initEditor(){
 
 
     animate();
+
+    if(window.sessionStorage.modelData != undefined){
+        onModelLoadFromFile(window.sessionStorage.modelData, 2);
+    }
 }
 
 function animate() {
     requestAnimationFrame( animate );
-    if(pathUpdate){
-        pathFollower.update();
-    }
-    
+   
+    pathFollower.update();
     
     render();
 }
@@ -370,7 +352,6 @@ function saveKeyframe(){
 
 function preview(){
     pathFollower.preview(pathObjs, pathPoints);
-    pathUpdate = true;
 }
 
 function exportContent(n){
@@ -382,16 +363,33 @@ function exportContent(n){
         }
         exportObj = tempObj;
         exportPath = pathPoints;
+
+        let geoText = geoFile.toText(objects);
+        let keyText = geoFile.keysToText(pathObjs,pathPoints);
+
+        window.sessionStorage.modelData = geoText + keyText;
         
-    }else{
+    }else if(n == 2){
         let geoText = geoFile.toText(objects);
         let keyText = geoFile.keysToText(pathObjs,pathPoints);
         geoFile.exportToAR(geoText, keyText, "ModelsAR");
     }
 }
 
-function onModelLoadFromFile(event) {
-    let text = event.target.result;
+function onModelLoadFromFile(event, n) {
+
+    if(n == null){
+        n = 1;
+    }
+
+    let text 
+    
+    if(n == 1){
+        text = event.target.result;
+    }else if(n == 2){
+        text = event;
+    }
+    
  
     let toAdd = geoFile.importInAR(text);
 
@@ -437,7 +435,7 @@ function onModelLoadFromFile(event) {
         pathObjs.push(addedMesh);
         let transform = {
             position:  keyframes[i].position,
-            rotationQuat: keyframes[i].rotationQuat
+            rotationQuat: keyframes[i].rotation
         }
         pathPoints.push(transform);
         
@@ -649,6 +647,7 @@ function showKeys(){
             }
         }else{
             document.getElementById("timeline").style.display = "none";
+            document.getElementById("keysMenu").style.display = "none";
             keysOpen = false;
         }
        
@@ -710,18 +709,31 @@ function selectedKey(el){
 
     if(lastKeySelectedElement != null){
 
-        lastKeySelectedElement.style.backgroundColor = "rgb(134,142,150)";
-
+        if(lightState){
+           lastKeySelectedElement.style.backgroundColor = "rgb(134,142,150)";
+            
+           // lastKeySelectedElement.style.backgroundColor = "rgb(255,0,0)";
+            
+          
+        }else{
+            //lastKeySelectedElement.style.backgroundColor = "rgb(134,142,150)";
+            
+            lastKeySelectedElement.style.backgroundColor = "white";
+        }
+        
         lastKeySelected.x = kId;
         lastKeySelected.y = pId;
 
+        //new 
         lastKeySelectedElement = el;
 
         lastKeySelectedElement.style.backgroundColor = "rgb(184,192,200)";
+        
     }else{
         lastKeySelectedElement = el;
-        lastKeySelectedElement.style.backgroundColor = "rgb(184,192,200)";
 
+        lastKeySelectedElement.style.backgroundColor = "rgb(184,192,200)";
+         
         lastKeySelected.x = kId;
         lastKeySelected.y = pId;
     }
@@ -776,9 +788,10 @@ function deleteKey(){
         scene.add(keyframes[lastKeySelected.x].path);
 
         let tempPosArr = keyframes[lastKeySelected.x].position;
+        let tempRotArr = keyframes[lastKeySelected.x].rotation;
 
         keyframes[lastKeySelected.x].obj.position.copy(tempPosArr[tempPosArr.length - 1]);
-       
+        keyframes[lastKeySelected.x].obj.quaternion.copy(tempRotArr[tempRotArr.length - 1]);
         keysOpen = false;
         showKeys();
     }
@@ -800,8 +813,20 @@ function changeStyleColor(){
         for(let i = 0; i < tempEls.length; i++){
             tempEls[i].style.backgroundColor = "white";
         }
-     
         
+        document.getElementById("timeline").style.borderColor = "white";
+        document.getElementById("timeline").style.backgroundColor = "rgb(134,142,150)";
+        document.getElementById("line").style.backgroundColor = "white";
+
+        
+        if(keysOpen){
+            let tempKeysDots = document.getElementsByClassName('keyframeDot');
+
+            for(let i = 0; i < tempEls.length; i++){
+                tempKeysDots[i].style.backgroundColor = "white";
+            }
+        }
+
         lightState = false;
     }else{
         scene.background = new THREE.Color("rgb(255,255,255)");
@@ -818,7 +843,25 @@ function changeStyleColor(){
         for(let i = 0; i < tempEls.length; i++){
             tempEls[i].style.backgroundColor = "rgb(134,142,150)";
         }
+         
+        document.getElementById("timeline").style.borderColor = "rgb(134,142,150)";
+        document.getElementById("timeline").style.backgroundColor = "white";
+        document.getElementById("line").style.backgroundColor = "rgb(134,142,150)";
+
+        
+
+        if( keysOpen){
+            let tempKeysDots = document.getElementsByClassName('keyframeDot');
+            for(let i = 0; i < tempEls.length; i++){
+                tempKeysDots[i].style.backgroundColor = "rgb(134,142,150)";
+            }
+        }
        
         lightState = true;
     }
+}
+
+function goToViewer(){
+    exportContent(1);
+    document.location.href = "./viewer/viewer2.html";
 }
