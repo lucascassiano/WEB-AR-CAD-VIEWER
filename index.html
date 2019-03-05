@@ -9,7 +9,7 @@
     <link type="text/css" rel="stylesheet" href="misc/bootstrap.css"/>
     <link type="text/css" rel="stylesheet" href="style.css"/>
 </head>
-<body oncontextmenu="return false;" style='margin : 0px; overflow: hidden;'>
+<body style='margin : 0px; overflow: hidden;'>
 
     <div id="overlay" class="containter-fluid">
        
@@ -18,7 +18,8 @@
             
             
                 <div class="col text-center" >
-                    <button onclick="initEditor()" >Editor</button>
+                    <a href="editor/editor.html" >Editor</a>
+                    <!-- <button onclick="initEditor()" >Editor</button> -->
                     <div id="img1"></div>
                 </div>
             
@@ -29,169 +30,6 @@
                 </div>
             
         </div>
-
-        <div id="editor" class="row">
-
-            <div id="lightBt" class="row" onclick="changeStyleColor()" data-toggle="tooltip" data-placement="bottom" title="On/Off"></div>
-
-            <div id="toolbar" class="col">
-
-               
-
-                <div class="btn-group dropright marginBT row" data-toggle="tooltip" data-placement="right" title="Controls">
-                    <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img id="imgBtLoad" class="imgBT" src="misc/imgs/move.png"/>
-                    </button>
-                    <div class="dropdown-menu transforms">
-                        <button class="dropdown-item " type="button" onclick="transforms('1')">
-                            <img id="imgBtPreview" class="imgBT text-center" src="misc/imgs/position.png">
-                        </button>
-                        <button class="dropdown-item " type="button" onclick="transforms('2')">
-                            <img id="imgBtPreview" class="imgBT text-center" src="misc/imgs/rotate.png">
-                        </button>
-                        <button class="dropdown-item " type="button" onclick="transforms('3')">
-                            <img id="imgBtPreview" class="imgBT text-center" src="misc/imgs/scale.png">
-                        </button>
-                        
-                    </div>
-                </div>
-
-                <button type="button" class="btn marginBT row" onclick="saveKeyframe()" data-toggle="tooltip" data-placement="right" title="Keyframe"><img id="imgBtPreview"  class="imgBT" src="misc/imgs/keyframe.png"></button>
-                <button type="button" class="btn marginBT row" onclick="preview()" data-toggle="tooltip" data-placement="right" title="Preview"> <img id="imgBtPreview"  class="imgBT" src="misc/imgs/preview.png"></button>
-
-                <div class="btn-group dropright marginBT row" data-toggle="tooltip" data-placement="right" title="Export">
-                    <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img id="imgBtLoad" class="imgBT" src="misc/imgs/export.png"/>
-                    </button>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item"  onclick="exportContent('1')"  href="#" > 
-                            Export to Viewer</a>
-                        <a class="dropdown-item" onclick="exportContent('2')" href="#" > 
-                            Export to File</a>
-                    </div>
-                </div>
-
-                <div class="btn-group dropright marginBT row" data-toggle="tooltip" data-placement="right" title="Load">
-                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img id="imgBtLoad" class="imgBT" src="misc/imgs/load.png"/>
-                        </button>
-                        <div class="dropdown-menu">
-                            <input type="file" id="selectedModel" style="display: none;" onchange="onChooseFile(event, onModelLoad.bind(this))" />
-                            <input type="file" id="selectedModelFile" style="display: none;" onchange="onChooseFile(event, onModelLoadFromFile.bind(this))" />
-                            <a class="dropdown-item" onclick="document.getElementById('selectedModel').click();" href="#" > 
-                                Load 3D Model</a>
-
-                            <a class="dropdown-item" onclick="document.getElementById('selectedModelFile').click();" href="#" > 
-                                Load .arcad File</a>
-                           
-                        </div>
-                </div>  
-
-                
-                <button type="button" class="btn viewerBT row" onclick="goToViewer()" data-toggle="tooltip" data-placement="right" title="Viewer"> 
-                    <img id="imgBtPreview"  class="imgBT" src="misc/imgs/smartphone.png">
-                </button>
-        
-            </div>
-            
-        
-           
-
-        </div>
-
-
-
-<!-- 
-        <div id="viewer" class="row">
-
-            <div id="toolbarViewerDesktop" class="col">
-
-                <div class="btn-group dropright marginBT row">
-                    <button type="button" class="btn btn-secondary dropdown-toggle btn-lg" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img id="imgBtLoadLG" class="imgBT" src="misc/imgs/load.png"/>
-                    </button>
-                    <div class="dropdown-menu">
-                        <input type="file" id="selectedFile" style="display: none;" onchange="onChooseFile(event, onModelLoadViewer.bind(this))" />
-                        
-                        <a class="dropdown-item btn-lg" onclick="document.getElementById('selectedFile').click();" href="#" > 
-                            Load .arcad File</a>
-                        
-                    </div>
-                </div>
-                
-                
-                <button type="button" class="btn btn-secondary marginBT row" onclick="previewer()"> <img id="imgBtPreviewLG"  class="imgBT" src="misc/imgs/preview.png"></button>
-                
-                
-            </div>
-
-            <div id="toolbarViewerMobile" class="col">
-                <div class="row">
-                    <input type="file" id="selectedFileMobile" style="display: none;" onchange="onChooseFile(event, onModelLoadViewer.bind(this))" />
-                    <button type="button" class="btn btn-secondary  btn-lg" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="document.getElementById('selectedFileMobile').click();">
-                        <img id="imgBtLoadLG" class="imgBT" src="misc/imgs/load.png"/>
-                    </button>
-
-                    <button type="button" class="btn btn-secondary marginBT" onclick="previewer()"> <img id="imgBtPreviewLG"  class="imgBT" src="misc/imgs/preview.png"></button>
-                </div>
-            </div>
-        </div> -->
-        
-
-
-
     </div>
-
-    <div id="optBt">
-        <div class="list-group">
-            <input type="file" id="selectedMaterial" style="display: none;" onchange="onChooseFile(event, onMaterialLoad.bind(this))" />
-            <button type="button" class="list-group-item list-group-item-action" onclick="document.getElementById('selectedMaterial').click();">Load Material</button>
-            <button id="keyframes" type="button" class="list-group-item list-group-item-action" onclick="showKeys()">Keyframes</button>
-            <button type="button" class="list-group-item list-group-item-action" onclick="deselect()">Deselect</button>
-            <button id="colorPicker" type="button" class="list-group-item list-group-item-action" onclick="setModelColor(this)">Change Color</button>
-            <button id="delete" type="button" class="list-group-item list-group-item-action" onclick="deleteSelected()">Delete</button>
-            
-          </div>
-    </div>
-
-    <div id="timeline">
-        
-        <div id="line"></div>
-        <div id="elementsWrapper"></div>
-            
-    </div>
-    
-    <div id="keysMenu">
-        <div id="keysOpt" class="list-group">
-            <button type="button" class="list-group-item list-group-item-action" onclick="resetKey()">Reset to last KeyFrame</button>
-            <button type="button" class="list-group-item list-group-item-action" onclick="deleteKey()">Delete</button>
-        </div>
-    </div>
-
-    <div id="renderDiv"></div>
-
-
-    
-    <script type="text/javascript" src="misc/jquery.js"></script>
-    <script type="text/javascript" src="misc/popper.js"></script>
-    <script type="text/javascript" src="misc/bootstrap.js"></script>
-    <script type="text/javascript" src="misc/three.js"></script>
-    <script type="text/javascript" src="misc/OBJLoader.js"></script>
-    <script type="text/javascript" src="misc/MTLLoader.js"></script>
-    <script type="text/javascript" src="misc/transformControls.js"></script>
-    <script type="text/javascript" src="misc/Orbit.js"></script>
-    <script type="text/javascript" src="misc/pathFollower.js"></script>
-    <script type="text/javascript" src="misc/geoFile.js"></script>
-    <script type="text/javascript" src="misc/vanilla-picker.js"></script>
-    <script type="text/javascript" src="editor/editor.js"></script>
-
-    <script>
-        $(function () {
-            $('[data-toggle="tooltip"]').tooltip()
-        })
-    </script>
-    <script type="text/javascript" src="./viewer/data/arjs/ar.js"></script>
-    <!-- <script type="text/javascript" src="./viewer/viewer.js"></script> -->
-    <!-- <script type="text/javascript" src="./viewer/teste.js"></script> -->
 </body>
 </html>

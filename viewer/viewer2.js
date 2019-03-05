@@ -192,7 +192,6 @@
 	}
 
     function previewer(){
-  
         pathFollower.preview(exportObj, exportPath);
     }
     
@@ -251,6 +250,11 @@
 
         exportObj = objects;
         exportPath = keyframesViewer;
+    }
+
+    function goToEditor(){
+      
+        document.location.href = "../editor/editor.html";
     }
 
     window.onload = initViewer;

@@ -38,8 +38,6 @@ var elementPicker = document.getElementById("colorPicker");
 var picker = new Picker(elementPicker);
 
 function initEditor(){
-    document.getElementById("title").style.display = "none";
-    document.getElementById("initialPage").style.display = "none";
     document.getElementById("editor").style.display = "block";
 
 
@@ -383,7 +381,7 @@ function onModelLoadFromFile(event, n) {
     }
 
     let text 
-    
+
     if(n == 1){
         text = event.target.result;
     }else if(n == 2){
@@ -863,5 +861,7 @@ function changeStyleColor(){
 
 function goToViewer(){
     exportContent(1);
-    document.location.href = "./viewer/viewer2.html";
+    document.location.href = "../viewer/viewer2.html";
 }
+
+window.onload = initEditor;
