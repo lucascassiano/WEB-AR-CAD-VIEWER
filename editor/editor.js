@@ -1,4 +1,4 @@
-var scene, camera, renderer, orbit, control;
+var scene, camera, renderer, orbit, control, gridHelper;
 
 var objects = [];
 
@@ -25,6 +25,10 @@ var lastKeySelectedElement;
 
 var pathUpdate = false;
 
+var size = 15;
+var divisions = 15;
+
+var lightState = true;
 
 var pathFollower = new PathFollower();
 var geoFile = new GeoFile();
@@ -42,7 +46,7 @@ function initEditor(){
     scene = new THREE.Scene();
     scene.background = new THREE.Color("rgb(255,255,255)");
     camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
-
+    
     var light = new THREE.AmbientLight(0x404040, 3); // soft white light
     scene.add(light);
 
@@ -82,12 +86,15 @@ function initEditor(){
     } );
     scene.add(control);
 
-    var size = 15;
-    var divisions = 15;
+   
 
-    var gridHelper = new THREE.GridHelper( size, divisions );
+    gridHelper = new THREE.GridHelper( size, divisions );
     gridHelper.recieveShadows = true;
     scene.add( gridHelper );
+
+    
+
+    console.log(gridHelper)
 
     // var geometry = new THREE.BoxGeometry( 1, 1, 1 );
     // var material = new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true } );
@@ -380,8 +387,63 @@ function exportContent(n){
         let geoText = geoFile.toText(objects);
         let keyText = geoFile.keysToText(pathObjs,pathPoints);
         geoFile.exportToAR(geoText, keyText, "ModelsAR");
-        console.log(pathPoints);
     }
+}
+
+function onModelLoadFromFile(event) {
+    let text = event.target.result;
+ 
+    let toAdd = geoFile.importInAR(text);
+
+    for(let i = 0; i < toAdd.meshesArr.length; i++){
+        toAdd.meshesArr[i].mesh.castShadow = true;
+        for(let j = 0; j < toAdd.keyframes.length; j++){
+            if(toAdd.meshesArr[i].id == toAdd.keyframes[j].id ){
+                tempId = toAdd.meshesArr[i].id;
+                break;
+            }
+        }
+        toAdd.meshesArr[i].mesh.position.copy(toAdd.keyframes[i].position[0]);
+
+        scene.add(toAdd.meshesArr[i].mesh);
+
+        let addedMesh = scene.children[scene.children.length - 1];
+
+        objects.push(addedMesh);
+
+        var material = new THREE.LineBasicMaterial({
+            color: "rgb(255, 00, 00)"
+        });
+
+        var geometry = new THREE.Geometry();
+
+        for(let j = 0; j < toAdd.keyframes[i].position.length; j++){
+            geometry.vertices.push(toAdd.keyframes[i].position[j]);
+        }
+    
+        var line = new THREE.Line(geometry, material);
+
+        scene.add(line);
+
+        let frame = {
+            obj: addedMesh,
+            path: line,
+            position: line.geometry.vertices,
+            rotation: toAdd.keyframes[i].rotationQuat
+        }
+
+        keyframes.push(frame);
+
+        pathObjs.push(addedMesh);
+        let transform = {
+            position:  keyframes[i].position,
+            rotationQuat: keyframes[i].rotationQuat
+        }
+        pathPoints.push(transform);
+        
+    }
+
+    this.value = "";
 }
 
 function onModelLoad(event) {
@@ -493,6 +555,7 @@ function deselect(){
     lastSelected = null;
     document.getElementById("optBt").style.display = "none";
     popMenu = false;
+    document.getElementById("timeline").style.display = "none";
 }
 
 function setClick(){
@@ -515,6 +578,7 @@ function deleteSelected(){
         }
     }
 
+    console.log(lastSelected.id);
     for(let i = 0; i < keyframes.length; i++ ){
         if(keyframes[i].obj.id == lastSelected.id){
             scene.remove(keyframes[i].path);
@@ -717,5 +781,44 @@ function deleteKey(){
        
         keysOpen = false;
         showKeys();
+    }
+}
+
+function changeStyleColor(){
+    if(lightState){ 
+        scene.background = new THREE.Color("rgb(134,142,150)");
+        scene.remove(gridHelper);
+        gridHelper = new THREE.GridHelper( size, divisions, new THREE.Color(0xffffff), new THREE.Color(0xffffff) );
+        scene.add(gridHelper);
+        
+        document.getElementById("lightBt").style.backgroundColor = "white";
+        
+        document.getElementById("toolbar").style.borderColor = "white";
+
+        let tempEls = document.getElementsByClassName('btn');
+
+        for(let i = 0; i < tempEls.length; i++){
+            tempEls[i].style.backgroundColor = "white";
+        }
+     
+        
+        lightState = false;
+    }else{
+        scene.background = new THREE.Color("rgb(255,255,255)");
+        scene.remove(gridHelper);
+        gridHelper = new THREE.GridHelper( size, divisions);
+        scene.add(gridHelper);
+        
+        document.getElementById("lightBt").style.backgroundColor = "rgb(134,142,150)";
+        
+        document.getElementById("toolbar").style.borderColor = "rgb(134,142,150)";
+
+        let tempEls = document.getElementsByClassName('btn');
+        
+        for(let i = 0; i < tempEls.length; i++){
+            tempEls[i].style.backgroundColor = "rgb(134,142,150)";
+        }
+       
+        lightState = true;
     }
 }

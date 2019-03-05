@@ -32,10 +32,14 @@
 
         <div id="editor" class="row">
 
+            <div id="lightBt" class="row" onclick="changeStyleColor()"></div>
+
             <div id="toolbar" class="col">
 
+               
+
                 <div class="btn-group dropright marginBT row">
-                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <img id="imgBtLoad" class="imgBT" src="misc/imgs/move.png"/>
                     </button>
                     <div class="dropdown-menu transforms">
@@ -52,11 +56,11 @@
                     </div>
                 </div>
 
-                <button type="button" class="btn btn-secondary marginBT row" onclick="saveKeyframe()" data-toggle="tooltip" data-placement="right" title="Preview"><img id="imgBtPreview"  class="imgBT" src="misc/imgs/keyframe.png"></button>
-                <button type="button" class="btn btn-secondary marginBT row" onclick="preview()"> <img id="imgBtPreview"  class="imgBT" src="misc/imgs/preview.png"></button>
+                <button type="button" class="btn marginBT row" onclick="saveKeyframe()" data-toggle="tooltip" data-placement="right" title="Preview"><img id="imgBtPreview"  class="imgBT" src="misc/imgs/keyframe.png"></button>
+                <button type="button" class="btn marginBT row" onclick="preview()"> <img id="imgBtPreview"  class="imgBT" src="misc/imgs/preview.png"></button>
 
                 <div class="btn-group dropright marginBT row">
-                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <img id="imgBtLoad" class="imgBT" src="misc/imgs/export.png"/>
                     </button>
                     <div class="dropdown-menu">
@@ -68,19 +72,24 @@
                 </div>
 
                 <div class="btn-group dropright marginBT row">
-                        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <img id="imgBtLoad" class="imgBT" src="misc/imgs/load.png"/>
                         </button>
                         <div class="dropdown-menu">
                             <input type="file" id="selectedModel" style="display: none;" onchange="onChooseFile(event, onModelLoad.bind(this))" />
-                            
+                            <input type="file" id="selectedModelFile" style="display: none;" onchange="onChooseFile(event, onModelLoadFromFile.bind(this))" />
                             <a class="dropdown-item" onclick="document.getElementById('selectedModel').click();" href="#" > 
                                 Load 3D Model</a>
+
+                           
+                        
+                            <a class="dropdown-item" onclick="document.getElementById('selectedModelFile').click();" href="#" > 
+                                Load .arcad File</a>
                            
                         </div>
                 </div>
 
-                <button type="button" class="btn btn-secondary viewerBT row" onclick="initViewer()"> 
+                <button type="button" class="btn viewerBT row" onclick="initViewer()"> 
                     <img id="imgBtPreview"  class="imgBT" src="misc/imgs/smartphone.png">
                 </button>
         

@@ -235,8 +235,6 @@
 
         let toAdd = geoFile.importInAR(text);
 
-        
-
         for(let i = 0; i < toAdd.meshesArr.length; i++){
             toAdd.meshesArr[i].mesh.castShadow = true;
             objects.push(toAdd.meshesArr[i].mesh);
@@ -246,7 +244,7 @@
                 break;
                 }
             }
-            toAdd.meshesArr[i].mesh.position.copy(keyframesViewer[0].position[0]);
+            toAdd.meshesArr[i].mesh.position.copy(keyframesViewer[i].position[0]);
             arWorldRoot.add(toAdd.meshesArr[i].mesh);
         }
 
