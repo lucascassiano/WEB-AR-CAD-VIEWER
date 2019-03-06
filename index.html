@@ -6,30 +6,141 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
+    crossorigin="anonymous">
     <link type="text/css" rel="stylesheet" href="misc/bootstrap.css"/>
     <link type="text/css" rel="stylesheet" href="style.css"/>
 </head>
-<body style='margin : 0px; overflow: hidden;'>
+<body style='margin : 0px;'>
 
     <div id="overlay" class="containter-fluid">
        
-        <div id="title" class="row" ><h1 class="col text-center">CAD AR VIEWER</h1></div>
+        <div id="title" class="row" >
+            <div class="col">
+                <div class="row justify-content-center">
+                    <img id="logoImg"  src="misc/imgs/logo.png">
+                </div>
+                <div class="row text-right">
+                    <p class="col">Alpha 0.1</p>
+                </div>
+                
+            </div>
+           
+        </div>
         <div id="initialPage"  class="row" >
             
-            
                 <div class="col text-center" >
-                    <a href="editor/editor.html" >Editor</a>
-                    <!-- <button onclick="initEditor()" >Editor</button> -->
-                    <div id="img1"></div>
+                
+                    <div id="img1" class="row">
+                        <a id="editorLink" href="editor/editor.html" >Editor</a>
+                        <img id="img1" src="misc/imgs/gifEditor.gif">
+                    </div>
+                   
                 </div>
             
                 <div class="col text-center">
                     <a href="viewer/viewer2.html" >Viewer</a>
-                    <!-- <button onclick="initViewer()">Viewer</button> -->
                     <div id="img2"></div>
                 </div>
-            
+        </div>
+
+
+        <div id="content" class="row">
+            <div id="textIntro" class="col text-center">
+                <p>ArCad is a keyframe <span style="color: green">Editor</span> and a <span style="color: green">AR Viewer</span> for your 3D Models. <br>Import, edit keyframes and visualize.</p>
+                <img src="misc/imgs/content.png">
+            </div>
+        </div>
+
+        <div id="learn" class="row">
+            <div class="col">
+                <div id="learnTitle" class="row justify-content-center">
+                    <p>Learn how to use it</p>
+                </div>
+                <div id="learnOpt" class="row">
+                    <div id="learEditor" class="col text-right">Editor</div>
+                    <div id="learViewer" class="col">Viewer</div>
+                </div>
+                <div id="learnContent"class="row">
+                    <div id="learnMenus" class="col">
+                        <div id="editorToolbar" class="col text-center">
+                            <div class="row justify-content-center">
+                                <button type="button" class="btn marginBT dropdown-toggle" data-toggle="tooltip" data-placement="right" title="Controls" onclick="showControls()">
+                                    <img id="imgBtLoad" class="imgBT" src="misc/imgs/move.png"/>
+                                </button>
+                            </div>
+
+                            <div class="row justify-content-center">
+                                <button type="button" class="btn marginBT row" data-toggle="tooltip" data-placement="right" title="Keyframe" onclick="showKeyframe()">
+                                    <img id="imgBtPreview"  class="imgBT" src="misc/imgs/keyframe.png">
+                                </button>
+                            </div>
+
+                            <div class="row justify-content-center">
+                                <button type="button" class="btn marginBT row" onclick="preview()" data-toggle="tooltip" data-placement="right" title="Preview"> 
+                                    <img id="imgBtPreview"  class="imgBT" src="misc/imgs/preview.png">
+                                </button>
+                            </div>
+
+                            <div class="row justify-content-center">
+                                <button type="button" class="btn marginBT dropdown-toggle"  data-toggle="tooltip" data-placement="right" title="Export">
+                                    <img id="imgBtLoad" class="imgBT" src="misc/imgs/export.png"/>
+                                </button>
+                            </div>
+
+                            <div class="row justify-content-center">
+                                <button type="button" class="btn marginBT dropdown-toggle" data-toggle="tooltip" data-placement="right" title="Load">
+                                    <img id="imgBtLoad" class="imgBT" src="misc/imgs/load.png"/>
+                                </button>
+                            </div>
+
+                            <div class="row justify-content-center">
+                                <button type="button" class="btn marginBT row" onclick="goToViewer()" data-toggle="tooltip" data-placement="right" title="Viewer"> 
+                                    <img id="imgBtPreview"  class="imgBT" src="misc/imgs/smartphone.png">
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div id="demonstrate"class="col">
+                        <div id="demonstrateEditor" class="text-center">
+                            <p id="textLearn"></p>
+                            <img id="imgControls" >      
+                            <img id="auxImg" >  
+                            <div id="grid">
+                                <img src="misc/imgs/grid.png">
+                            </div>
+                           
+
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+
+    <div id="footer" class="row jumbotron jumbotron-fluid">
+        <div class="container">
+            <div class="row ">
+                <div class="col text-center">
+                    <p>More about and more projects at:</p>
+                    <a href="https://github.com/Carnaux" class="fab fa-github" style="font-size: 80px; color: black"></a>
+                    <p id="copyright">Daniel Fernandes 2019</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="misc/jquery.js"></script>
+    <script type="text/javascript" src="misc/popper.js"></script>
+    <script type="text/javascript" src="misc/bootstrap.js"></script>
+    <script type="text/javascript" src="index.js"></script>
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
 </body>
 </html>

@@ -1,28 +1,6 @@
 body{
     margin: 0;
-    overflow: hidden;
-}
-#editor{
-    display: none;
-}
-
-
-#optBt{
-    position: absolute;
-    display: none;
-}
-#lightBt{
-    position: absolute;
-    top: 5px;
-    left: 15px;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: rgb(134,142,150);
-
-}
-.btn{
-    background-color: rgb(134,142,150);
+    overflow-x: hidden;
 }
 /* intial page */
 #initialPage{
@@ -33,14 +11,34 @@ body{
 
     
 }
+#title{
+    /* background-color: rgb(221, 221, 221) */
+}
+#logoImg{
+    width: 650px;
+    margin-left: 50px;
+}
 #img1{
     margin-left: 0;
     padding-left: 0;
-
-   
-    background-color: blue;
+    width: 100%;
+    height: 600px;
+    opacity: 0.5;
+    background-color: gray;
     border-style: solid;
     border-radius: 40px;
+}
+#editorLink{
+    position: absolute;
+    top: 35%;
+    left: 38%;
+    z-index: 2;
+    font-size: 100px;
+    text-decoration: none;
+    color: black
+}
+#editorLink:hover + #img1{
+    opacity: 0.2;
 }
 #img2{
     margin-right: 0;
@@ -52,18 +50,33 @@ body{
     border-radius: 40px;
 }
 
-/* toolbar */
+/* content */
+
+#textIntro{
+    margin-top: 50px;
+    font-size: 40px;
+}
+
+#content{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#learnTitle{
+    font-size: 50px;
+    background-color: green;
+}
+#learnOpt{
+    font-size: 30px;
+}
+/* editor */
+.btn{
+
+    background-color: rgb(134,142,150);
+}
 .marginBT{
     margin-top: 20px;
 }
-
-.viewerBT{
-    margin-top: 40px;
-    
-}
-
-
-
 #imgBtLoad{
     width: 15px;
     height: 15px;
@@ -73,92 +86,35 @@ body{
     width: 30px;
     height: 25px;
 }
-
-#toolbar{
-    
-    position: absolute;
-    top: 100px;
-    left: 0;
-    background-color: transparent;
-    width: 30px;
-    height: 400px;
-    border-color: rgb(134,142,150);
-    border-style: solid;
-    border-top-right-radius: 40px;
-    border-bottom-right-radius: 40px;
-    
-}
-/* editor */
-
-.transforms{
-    width: 0px;
+#learnContent{
+    margin-top: 40px;
 }
 
-#timeline{
-    position: absolute;
-    bottom: 10px;
-    left: 30%;
-    height: 120px;
-    border-top-right-radius: 40px;
-    border-top-left-radius: 40px; 
-    border-width: 3px;
-    border-color: rgb(134,142,150);
-    border-style: solid; 
-    background-color: white;
-    box-shadow: 0px 10px 50px #888888;
-    overflow-y: hidden;
-    overflow-x: scroll;
+#textLearn{
+   display: none;
+}
+/* controls */
+#controls{
+    
+}
+#imgControls{
     display: none;
-}
-
-#line{
     position: absolute;
-    top: 50%;
-    left: 20px;
-    background-color: rgb(134,142,150);
-    width: 500px;
-    height: 3px;
-}
-#elementsWrapper{
-    width: 550px;   
-}
-
-.keyframeDot{
-    position: absolute;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    top: 38px;
-    background-color: rgb(134,142,150);
-    
-}
-
-#keysMenu{
-    position: absolute;
-    bottom: 30px;
-    display: none;
-}
-
-#timeline::-webkit-scrollbar-track
-{
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-	border-radius: 10px;
-    background-color: #F5F5F5;
-    overflow: hidden;
-}
-
-#timeline::-webkit-scrollbar
-{
-	width: 12px;
-	background-color: #F5F5F5;
-}
-
-#timeline::-webkit-scrollbar-thumb
-{
-	border-radius: 10px;
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-	background-color: #555;
+    top: 120px;
+    left: 320px;
 }
 
 
+#footer{
+    margin: 0;
+}
+#copyright{
+    margin-top: 20px;
+}
+@media (min-width: 576px){
 
+    .jumbotron {
+        padding-top: 2rem;
+        padding-bottom: 0;
+    }
+}
